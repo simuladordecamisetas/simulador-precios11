@@ -5,21 +5,91 @@
 <title>Simulador PRO</title>
 
 <style>
-body{font-family:Arial;background:#f5f5f5;padding:20px;}
-.container{max-width:1000px;margin:auto;background:white;padding:20px;border-radius:12px;box-shadow:0 0 15px rgba(0,0,0,0.1);}
-select,input,button{width:100%;padding:10px;margin:6px 0;border-radius:6px;}
-button{background:#007bff;color:white;border:none;cursor:pointer;}
-li{background:#eee;margin:5px 0;padding:10px;border-radius:6px;}
-.btn-eliminar{float:right;background:red;color:white;border:none;border-radius:4px;}
-.total{font-size:22px;text-align:center;margin-top:10px;font-weight:bold;}
-</style>
-</head>
+body{
+font-family:'Segoe UI', Arial;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+margin:0;
+padding:20px;
+}
 
+.container{
+max-width:1000px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+h2{
+text-align:center;
+color:#0f172a;
+margin-bottom:20px;
+}
+
+select,input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+border:1px solid #ccc;
+font-size:15px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:10px;
+border:none;
+font-weight:bold;
+cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+.btn-agregar{background:#2563eb;color:white;}
+.btn-vaciar{background:#ef4444;color:white;}
+
+li{
+list-style:none;
+background:#f8fafc;
+margin:8px 0;
+padding:12px;
+border-radius:10px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+.btn-eliminar{
+float:right;
+background:#ef4444;
+color:white;
+border:none;
+border-radius:6px;
+padding:5px 10px;
+cursor:pointer;
+}
+
+.total{
+font-size:22px;
+text-align:center;
+margin-top:20px;
+font-weight:bold;
+background:#e0f2fe;
+padding:12px;
+border-radius:10px;
+}
+</style>
+
+</head>
 <body>
 
 <div class="container">
 
-<h2>Simulador de tu compra</h2>
+<h2>Simulador PRO</h2>
 
 <select id="pais" onchange="init()">
 <option value="arg">Argentina</option>
@@ -36,12 +106,12 @@ li{background:#eee;margin:5px 0;padding:10px;border-radius:6px;}
 
 <div id="extras"></div>
 
-<button onclick="agregar()">Agregar</button>
+<button class="btn-agregar" onclick="agregar()">Agregar al carrito</button>
 
 <h3>Carrito</h3>
 <ul id="carrito"></ul>
 
-<button onclick="vaciar()">Vaciar carrito</button>
+<button class="btn-vaciar" onclick="vaciar()">Vaciar carrito</button>
 
 <div class="total" id="total"></div>
 
@@ -50,93 +120,19 @@ li{background:#eee;margin:5px 0;padding:10px;border-radius:6px;}
 <script>
 
 let nombres={
-fan:"Fan",playerNike:"Player Nike",playerAdidas:"Player Adidas",playerPuma:"Player Puma",
+fan:"Fan",playerNike:"Player Nike",playerAdidas:"Player Adidas",
 retro:"Retro",nba:"NBA",nfl:"NFL",
-shortsFan:"Short Fan",shortsPlayer:"Short Player",shorts:"Short",
-medias:"Medias",mediasNinos:"Medias Niño",mediasAdultos:"Medias Adulto",
-kitInfantil:"Kit Infantil",kitAdulto:"Kit Adulto",
-entrenamiento:"Entrenamiento",jacket:"Campera",pants:"Pantalón",
-jacketPants:"Conjunto",rompevientos:"Rompevientos"
+shortsFan:"Short Fan",shortsPlayer:"Short Player",
+medias:"Medias",kitInfantil:"Kit Infantil"
 };
 
 let vendedores={
-
-king:{
-disp:["col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:15,nba:20,kitInfantil:13,shorts:9,medias:4}},
-ext:{parche:1,personalizacion:3,cuello:1,manga:1,talle2XL:1},
-env:c=>c==1?5:c==2?4:c==3?3:0
-},
-
-huang:{
-disp:["arg","col","per","otro"],
-prod:{
-arg:{fan:13,playerAdidas:16,playerNike:18,retro:20,nba:22,kitInfantil:13,shortsFan:11,shortsPlayer:15,medias:6,entrenamiento:50,jacketPants:40,pants:20},
-otro:{fan:11,playerAdidas:14,playerNike:16,retro:16,nba:20,kitInfantil:13,shortsFan:9,shortsPlayer:13,medias:5,entrenamiento:35,jacketPants:38,pants:18}
-},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3},
-env:c=>c==1?4:c==2?3:c==3?2:0
-},
-
-meiou:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:13,playerPuma:14,playerNike:15,retro:15,nba:20,nfl:25,kitInfantil:13,shortsFan:10,shortsPlayer:13,medias:8,jacket:40,entrenamiento:35,rompevientos:32}},
-ext:{parche:1,personalizacion:3,manga:1,talle3XL:1,talle4XL:2},
-env:c=>c<=2?10:c<=4?8:6
-},
-
 pinhui:{
 disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:13,playerNike:17,retro:17,nba:20,nfl:25,kitInfantil:14,shortsFan:10,shortsPlayer:15,medias:8,entrenamiento:40,jacket:30,kitCompleto:20}},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3},
-env:c=>c>=5?0:5
-},
-
-annie:{
-disp:["arg","col","per","otro"],
-prod:{arg:{fan:12,player:18,retro:18,nba:22,kitInfantil:14,kitAdulto:22,shorts:12,manga:16},otro:{fan:11,player:15,retro:16}},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:2},
-env:c=>10
-},
-
-bond:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,kitInfantil:13,shortsFan:8,shortsPlayer:12,medias:3,entrenamiento:35,kitCompleto:19,jacketPants:38,pants:18}},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>c==1?7:c<=4?5:0
-},
-
-jerry:{
-disp:["col","per","otro"],
-prod:{otro:{fan:11,player:15,retro:16,nba:20,kitInfantil:13}},
+prod:{otro:{fan:11,playerAdidas:13,playerNike:17,retro:17,nba:20,nfl:25,kitInfantil:14,shortsFan:10,shortsPlayer:15,medias:8}},
 ext:{parche:1,personalizacion:3},
-env:c=>c>=3?0:5
-},
-
-xiaoli:{
-disp:["arg","col","per","otro"],
-prod:{
-arg:{fan:13,playerAdidas:16,playerNike:17,retro:18,nba:22,nfl:25,kitInfantil:15,kitAdulto:21,shortsFan:10,shortsPlayer:14,mediasNinos:3,mediasAdultos:4,entrenamiento:37,jacket:30,pants:19,jacketPants:42},
-otro:{fan:11,playerAdidas:14,playerNike:16,retro:15,nba:20}
-},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>c==2?11:c==3?9:c==4?7:0
-},
-
-meiting:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerNike:15,retro:15,nba:20,nfl:25,kitInfantil:13,shortsFan:10,shortsPlayer:13,medias:8,jacket:40,entrenamiento:35}},
-ext:{parche:1,personalizacion:3,manga:1,talle3XL:1,talle4XL:2},
-env:c=>c<=2?10:c<=4?8:6
-},
-
-mai:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,nba:20,nfl:23,kitInfantil:13,kitAdulto:19,shortsFan:8,shortsPlayer:12,shorts:14,mediasNinos:2,mediasAdultos:3,entrenamiento:35,jacket:28,pants:17,jacketPants:38}},
-ext:{parche:1,personalizacion:3,talle:1},
-env:c=>5
+env:c=>c>=5?0:5
 }
-
 };
 
 let carritos={};
@@ -153,6 +149,7 @@ op.value=v;
 op.textContent=v.toUpperCase();
 sel.appendChild(op);
 }}
+
 cargarTodo();
 }
 
