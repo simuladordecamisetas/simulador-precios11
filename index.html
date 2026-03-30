@@ -24,14 +24,17 @@ linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
 url("https://i.pinimg.com/736x/4e/53/df/4e53df7fbfe0a967661bbd9d46393994.jpg") center/cover no-repeat;
 z-index:-1;
 }
+
 .container{
-max-width:1200px;
+max-width:1100px;
 margin:auto;
-background:rgba(255,255,255,0.9);
+background:white;
 padding:25px;
 border-radius:16px;
-backdrop-filter:blur(10px);
+box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
+
+h2{text-align:center;}
 
 .grid{
 display:grid;
@@ -41,18 +44,20 @@ gap:20px;
 
 select,input{
 width:100%;
-padding:10px;
-margin:6px 0;
-border-radius:8px;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+border:1px solid #ccc;
 }
 
 button{
 width:100%;
-padding:10px;
+padding:12px;
 border:none;
-border-radius:8px;
-cursor:pointer;
+border-radius:10px;
 font-weight:bold;
+cursor:pointer;
+margin-top:10px;
 }
 
 .btn-agregar{background:#2563eb;color:white;}
@@ -61,32 +66,35 @@ font-weight:bold;
 .card{
 background:#f1f5f9;
 padding:15px;
-border-radius:10px;
+border-radius:12px;
 }
 
 li{
+list-style:none;
 background:white;
 margin:6px 0;
 padding:10px;
 border-radius:8px;
-list-style:none;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.btn-eliminar{
+float:right;
+background:red;
+color:white;
+border:none;
+border-radius:5px;
+padding:4px 8px;
 }
 
 .total{
-margin-top:10px;
-font-size:18px;
+margin-top:15px;
+font-size:22px;
+text-align:center;
 font-weight:bold;
 background:#e0f2fe;
 padding:10px;
-border-radius:8px;
-}
-
-.detalle{
-font-size:14px;
-margin-top:10px;
-background:#f8fafc;
-padding:10px;
-border-radius:8px;
+border-radius:10px;
 }
 </style>
 
@@ -95,11 +103,14 @@ border-radius:8px;
 <body>
 
 <div class="container">
+
 <h2>Simulador PRO</h2>
 
 <div class="grid">
 
 <div class="card">
+
+<label>País</label>
 <select id="pais" onchange="init()">
 <option value="arg">Argentina</option>
 <option value="col">Colombia</option>
@@ -107,116 +118,105 @@ border-radius:8px;
 <option value="otro">Otro</option>
 </select>
 
+<label>Vendedor</label>
 <select id="vendedor" onchange="cargarTodo()"></select>
+
+<label>Producto</label>
 <select id="producto"></select>
 
+<label>Cantidad</label>
 <input type="number" id="cantidad" value="1" min="1">
 
 <div id="extras"></div>
 
 <button class="btn-agregar" onclick="agregar()">Agregar</button>
+
 </div>
 
 <div class="card">
+
 <h3>Carrito</h3>
 <ul id="carrito"></ul>
 
 <button class="btn-vaciar" onclick="vaciar()">Vaciar</button>
 
 <div class="total" id="total"></div>
-<div class="detalle" id="detalle"></div>
+
 </div>
 
 </div>
+
 </div>
 
 <script>
 
-// nombres
 let nombres={
-fan:"Fan",
-playerAdidas:"Player Adidas",
-playerNike:"Player Nike",
-retro:"Retro",
-nba:"NBA",
-nfl:"NFL",
-kit:"Kit",
+fan:"Fan",playerAdidas:"Player Adidas",playerNike:"Player Nike",playerPuma:"Player Puma",
+retro:"Retro",nba:"NBA",nfl:"NFL",
+shortsFan:"Short Fan",shortsPlayer:"Short Player",
+medias:"Medias",mediasNinos:"Medias Niño",mediasAdultos:"Medias Adulto",
+kitInfantil:"Kit Infantil",kitAdulto:"Kit Adulto",
+kitEntrenamiento:"Kit Entrenamiento",
 jacket:"Jacket",
-pants:"Pants"
+pants:"Pants",
+jacketPants:"Jacket + Pants",
+underArmour:"Under Armour"
 };
 
-// vendedores completos
 let vendedores={
 
-king:{
-disp:["col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:15,nba:20,kit:13}},
-ext:{parche:1,personalizacion:3,talle2XL:1},
-env:c=>c>=4?0:c==3?3:c==2?4:5
-},
+king:{disp:["col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:15,nba:20,nfl:25,kitInfantil:13,shortsFan:9,medias:4,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38,underArmour:28}},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1,cuelloPolo:1},
+env:c=>c>=4?0:c==3?3:c==2?4:5},
 
-huang:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:16,retro:16,kit:13}},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:2},
-env:c=>c>=4?0:c==3?2:c==2?3:4
+huang:{disp:["arg","col","per","otro"],
+prod:{
+arg:{fan:13,playerAdidas:16,playerNike:18,retro:20,nba:22,nfl:25,shortsFan:11,shortsPlayer:15,medias:6,kitEntrenamiento:40,jacket:30,pants:20,jacketPants:40,underArmour:30},
+otro:{fan:11,playerAdidas:14,playerNike:16,retro:16,nba:20,nfl:25,shortsFan:9,shortsPlayer:13,medias:5,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38,underArmour:28}
 },
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
+env:c=>c>=4?0:c==3?2:c==2?3:4},
 
-meiou:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:13,playerNike:15,retro:15,nba:20,nfl:25}},
-ext:{parche:1,personalizacion:3,talle3XL:1,talle4XL:2},
-env:c=>c>=4?0:5
-},
+meiou:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:13,playerPuma:14,playerNike:15,retro:15,nba:20,nfl:25,shortsFan:10,shortsPlayer:13,medias:8,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38}},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
+env:c=>c>=5?6:c>=3?8:10},
 
-pinhui:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:13,playerNike:17,retro:17,nba:20,nfl:25}},
+pinhui:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:13,playerNike:17,retro:17,nba:20,nfl:25,shortsFan:10,shortsPlayer:15,medias:8,kitEntrenamiento:40,jacket:30,pants:18,jacketPants:38}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3},
-env:c=>c>=5?0:5
-},
+env:c=>c>=5?0:5},
 
-annie:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:12,playerAdidas:18,playerNike:18,retro:18,nba:22}},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:2},
-env:c=>10
-},
+annie:{disp:["arg","col","per","otro"],
+prod:{arg:{fan:12,playerAdidas:18,playerNike:18,retro:18,nba:22,nfl:24,shortsFan:12,kitEntrenamiento:40,jacket:35},otro:{fan:11,playerAdidas:15,retro:16,nba:20}},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3},
+env:c=>10},
 
-bond:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16}},
+bond:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,shortsFan:8,shortsPlayer:12,medias:3,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>c>=5?0:c>=2?5:7
-},
+env:c=>c>=5?0:c>=2?5:7},
 
-jerry:{
-disp:["col","per","otro"],
-prod:{otro:{fan:11,playerNike:15,retro:16,nba:20}},
+jerry:{disp:["col","per","otro"],
+prod:{otro:{fan:11,playerNike:15,retro:16,nba:20,nfl:25}},
 ext:{parche:1,personalizacion:3},
-env:c=>c>=3?0:5
-},
+env:c=>c>=3?0:5},
 
-xiao:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:16,retro:15,nba:22,nfl:25}},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2},
-env:c=>c>=5?0:5
-},
-
-meiting:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:13,playerNike:15,retro:15,nba:20,nfl:25}},
-ext:{parche:1,personalizacion:3,talle3XL:1,talle4XL:2},
-env:c=>c>=4?0:5
-},
-
-mai:{
-disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,nba:20,nfl:23}},
+xiaoli:{disp:["arg","col","per","otro"],
+prod:{arg:{fan:13,playerAdidas:16,playerNike:17,retro:18,nba:22,nfl:25,shortsFan:10,shortsPlayer:14,mediasNinos:3,mediasAdultos:4,kitEntrenamiento:37,jacket:30,pants:19,jacketPants:42},otro:{fan:11,playerAdidas:14,playerNike:16,retro:15,nba:20}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>c>=5?0:5
-}
+env:c=>c>=5?0:c==4?7:c==3?9:c==2?11:5},
+
+meiting:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerNike:15,retro:15,nba:20,nfl:25,shortsFan:10,shortsPlayer:13,medias:8,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38}},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
+env:c=>c>=5?6:c>=3?8:10},
+
+mai:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,nba:20,nfl:23,shortsFan:8,shortsPlayer:12,mediasNinos:2,mediasAdultos:3,kitEntrenamiento:35,jacket:28,pants:17,jacketPants:38}},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
+env:c=>5}
 
 };
 
@@ -234,91 +234,122 @@ op.value=v;
 op.textContent=v.toUpperCase();
 sel.appendChild(op);
 }}
-
 cargarTodo();
 }
 
 function cargarTodo(){
+let pais=document.getElementById("pais").value;
 let vendedor=document.getElementById("vendedor").value;
 let v=vendedores[vendedor];
+
+let productos=v.prod[pais]||v.prod.otro;
 
 let prodSel=document.getElementById("producto");
 prodSel.innerHTML="";
 
-for(let p in v.prod.otro){
+for(let p in productos){
 let op=document.createElement("option");
 op.value=p;
-op.textContent=nombres[p]+" ($"+v.prod.otro[p]+")";
+op.textContent=(nombres[p]||p)+" ($"+productos[p]+")";
 prodSel.appendChild(op);
 }
 
-// extras dinámicos
 let extras=document.getElementById("extras");
 extras.innerHTML="<b>Extras:</b><br>";
 
-let p=document.createElement("input");
-p.type="number";
-p.placeholder="Ej: 3";
-p.id="parcheCantidad";
+// parches
+let parcheInput=document.createElement("input");
+parcheInput.type="number";
+parcheInput.min="0";
+parcheInput.placeholder="Ej: 3";
+parcheInput.id="parcheCantidad";
+
 extras.append("Parches (+$"+v.ext.parche+" c/u): ");
-extras.appendChild(p);
+extras.appendChild(parcheInput);
 extras.appendChild(document.createElement("br"));
 
-let t=document.createElement("input");
-t.type="text";
-t.placeholder="Ej: Messi 10";
-t.id="personalizacionTexto";
+// personalización
+let persInput=document.createElement("input");
+persInput.type="text";
+persInput.placeholder="Ej: Messi 10";
+persInput.id="personalizacionTexto";
+
 extras.append("Personalización (+$"+v.ext.personalizacion+"): ");
-extras.appendChild(t);
+extras.appendChild(persInput);
 extras.appendChild(document.createElement("br"));
 
-Object.keys(v.ext).forEach(e=>{
-if(e.startsWith("talle")){
+// otros extras
+for(let e in v.ext){
+
+if(e=="parche"||e=="personalizacion") continue;
+
+let nombreExtra=e;
+if(e=="talle2XL") nombreExtra="Talle 2XL";
+if(e=="talle3XL") nombreExtra="Talle 3XL";
+if(e=="talle4XL") nombreExtra="Talle 4XL";
+if(e=="mangaLarga") nombreExtra="Manga Larga";
+if(e=="cuelloPolo") nombreExtra="Cuello Polo";
+
+let label=document.createElement("label");
+
 let c=document.createElement("input");
 c.type="checkbox";
 c.value=e;
-extras.appendChild(c);
-extras.append(" "+e.replace("talle","Talle ")+" (+$"+v.ext[e]+")");
+
+label.appendChild(c);
+label.append(" "+nombreExtra+" (+$"+v.ext[e]+")");
+
+extras.appendChild(label);
 extras.appendChild(document.createElement("br"));
 }
-});
+
+render();
 }
 
 function agregar(){
+let pais=document.getElementById("pais").value;
 let vendedor=document.getElementById("vendedor").value;
 let producto=document.getElementById("producto").value;
-let cantidad=parseInt(document.getElementById("cantidad").value);
-
-let v=vendedores[vendedor];
-let base=v.prod.otro[producto];
-
-let extrasTotal=0;
-let partesExtras=[];
-
-let p=parseInt(document.getElementById("parcheCantidad").value)||0;
-if(p>0){
-extrasTotal+=p*v.ext.parche;
-partesExtras.push(`${p} parches ($${v.ext.parche} c/u)`);
-}
-
-let txt=document.getElementById("personalizacionTexto").value.trim();
-if(txt!=""){
-extrasTotal+=v.ext.personalizacion;
-partesExtras.push(`${txt} ($${v.ext.personalizacion})`);
-}
-
-document.querySelectorAll("#extras input[type=checkbox]:checked").forEach(c=>{
-extrasTotal+=v.ext[c.value];
-partesExtras.push(`${c.value.replace("talle","Talle ")} ($${v.ext[c.value]})`);
-});
-
-let total=(base+extrasTotal)*cantidad;
+let cantidad=parseInt(document.getElementById("cantidad").value)||1;
 
 if(!carritos[vendedor]) carritos[vendedor]=[];
 
-carritos[vendedor].push({
-producto,cantidad,total,base,extrasTotal,partesExtras
+let v=vendedores[vendedor];
+let productos=v.prod[pais]||v.prod.otro;
+
+let base=productos[producto];
+let extraTotal=0;
+let extrasSel=[];
+
+// parches
+let cantParches=parseInt(document.getElementById("parcheCantidad").value)||0;
+if(cantParches>0){
+extraTotal+=cantParches*v.ext.parche;
+extrasSel.push(cantParches+" parches");
+}
+
+// personalización
+let texto=document.getElementById("personalizacionTexto").value.trim();
+if(texto!=""){
+extraTotal+=v.ext.personalizacion;
+extrasSel.push(texto);
+}
+
+// otros
+document.querySelectorAll("#extras input[type=checkbox]:checked").forEach(c=>{
+extraTotal+=v.ext[c.value];
+
+if(c.value=="talle2XL") extrasSel.push("2XL");
+else if(c.value=="talle3XL") extrasSel.push("3XL");
+else if(c.value=="talle4XL") extrasSel.push("4XL");
+else if(c.value=="mangaLarga") extrasSel.push("Manga Larga");
+else if(c.value=="cuelloPolo") extrasSel.push("Cuello Polo");
+else extrasSel.push(c.value);
 });
+
+let precio=(base+extraTotal)*cantidad;
+
+carritos[vendedor].push({producto,cantidad,precio,extras:extrasSel});
 
 render();
 calcular();
@@ -331,26 +362,36 @@ ul.innerHTML="";
 
 (carritos[vendedor]||[]).forEach((item,i)=>{
 
-let base=`${item.cantidad}x ${nombres[item.producto]} ($${item.base} c/u)`;
-let extras=item.partesExtras.length?" + "+item.partesExtras.join(" + "):"";
+let nombre=nombres[item.producto]||item.producto;
+
+let extrasTexto=item.extras.length
+? " + " + item.extras.join(" + ")
+: "";
 
 let li=document.createElement("li");
-li.innerHTML=`${base}${extras} = $${item.total}
-<button onclick="eliminar(${i})">X</button>`;
+
+li.innerHTML=`
+${item.cantidad}x ${nombre}${extrasTexto} - $${item.precio}
+<button class="btn-eliminar" onclick="eliminar(${i})">X</button>
+`;
+
 ul.appendChild(li);
+
 });
 }
 
 function eliminar(i){
 let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor].splice(i,1);
-render();calcular();
+render();
+calcular();
 }
 
 function vaciar(){
 let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor]=[];
-render();calcular();
+render();
+calcular();
 }
 
 function calcular(){
@@ -358,13 +399,12 @@ let vendedor=document.getElementById("vendedor").value;
 let v=vendedores[vendedor];
 let cart=carritos[vendedor]||[];
 
-let items=cart.reduce((a,b)=>a+b.cantidad,0);
-let subtotal=cart.reduce((a,b)=>a+b.total,0);
-let envio=v.env(items);
+let totalItems=cart.reduce((a,b)=>a+b.cantidad,0);
+let subtotal=cart.reduce((a,b)=>a+b.precio,0);
+let envio=v.env(totalItems);
 
-document.getElementById("total").innerText="TOTAL: $"+(subtotal+envio);
-document.getElementById("detalle").innerHTML=
-`Productos: ${items}<br>Subtotal: $${subtotal}<br>Envío: $${envio}`;
+document.getElementById("total").innerText=
+"TOTAL: $"+(subtotal+envio)+" ("+totalItems+" productos - envío $"+envio+")";
 }
 
 init();
