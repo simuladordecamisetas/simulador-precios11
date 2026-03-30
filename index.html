@@ -2,79 +2,26 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Simulador PRO</title>
+<title>Simulador de tu compra</title>
 
 <style>
-body{
-  font-family: Arial;
-  background:#f5f5f5;
-  padding:20px;
-}
-
-.container{
-  max-width:900px;
-  margin:auto;
-  background:white;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 0 15px rgba(0,0,0,0.1);
-}
-
-h2,h3{
-  text-align:center;
-}
-
-select,button{
-  width:100%;
-  padding:10px;
-  margin:6px 0;
-  border-radius:6px;
-}
-
-button{
-  background:#007bff;
-  color:white;
-  border:none;
-  cursor:pointer;
-}
-
-button:hover{
-  background:#0056b3;
-}
-
-#carrito li{
-  background:#eee;
-  margin:5px 0;
-  padding:8px;
-  border-radius:6px;
-}
-
-.btn-eliminar{
-  float:right;
-  background:red;
-  color:white;
-  border:none;
-  border-radius:4px;
-  cursor:pointer;
-  padding:3px 8px;
-}
-
-.total{
-  font-size:22px;
-  text-align:center;
-  margin-top:10px;
-  font-weight:bold;
-}
+body{font-family:Arial;background:#f5f5f5;padding:20px;}
+.container{max-width:1000px;margin:auto;background:white;padding:20px;border-radius:12px;box-shadow:0 0 15px rgba(0,0,0,0.1);}
+select,input,button{width:100%;padding:10px;margin:6px 0;border-radius:6px;}
+button{background:#007bff;color:white;border:none;cursor:pointer;}
+button:hover{background:#0056b3;}
+li{background:#eee;margin:5px 0;padding:10px;border-radius:6px;}
+.btn-eliminar{float:right;background:red;color:white;border:none;border-radius:4px;padding:3px 8px;}
+.total{font-size:22px;text-align:center;margin-top:10px;font-weight:bold;}
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="container">
 
 <h2>Simulador PRO</h2>
 
-<label>País</label>
 <select id="pais" onchange="init()">
 <option value="arg">Argentina</option>
 <option value="col">Colombia</option>
@@ -82,21 +29,20 @@ button:hover{
 <option value="otro">Otro</option>
 </select>
 
-<label>Vendedor</label>
 <select id="vendedor" onchange="cargarTodo()"></select>
 
-<label>Producto</label>
 <select id="producto"></select>
 
-<h3>Extras</h3>
+<input type="number" id="cantidad" value="1" min="1">
+
 <div id="extras"></div>
 
-<button onclick="agregar()">Agregar al carrito</button>
+<button onclick="agregar()">Agregar</button>
 
 <h3>Carrito</h3>
 <ul id="carrito"></ul>
 
-<button onclick="calcular()">Calcular total</button>
+<button onclick="vaciar()">Vaciar carrito</button>
 
 <div class="total" id="total"></div>
 
@@ -104,154 +50,82 @@ button:hover{
 
 <script>
 
-let vendedores = {
+// nombres lindos
+let nombres={
+fan:"Fan",playerNike:"Player Nike",playerAdidas:"Player Adidas",playerPuma:"Player Puma",
+retro:"Retro",nba:"NBA",nfl:"NFL",
+shortsFan:"Short Fan",shortsPlayer:"Short Player",shorts:"Short",
+medias:"Medias",mediasNinos:"Medias Niño",mediasAdultos:"Medias Adulto",
+kitInfantil:"Kit Infantil",kitAdulto:"Kit Adulto",
+entrenamiento:"Kit Entrenamiento",jacket:"Campera",pants:"Pantalón",
+jacketPants:"Conjunto",rompevientos:"Rompevientos"
+};
 
-// KING
-king:{
-disp:["col","per","otro"],
-prod:{otro:{
-fan:11,playerAdidas:14,playerNike:15,retro:15,nba:20,
-kitInfantil:13,shorts:9,medias:4
-}},
+// TODOS LOS VENDEDORES COMPLETOS
+let vendedores={
+
+king:{disp:["col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:15,nba:20,kitInfantil:13,shorts:9,medias:4}},
 ext:{parche:1,personalizacion:3,cuello:1,manga:1,talle2XL:1},
-env:c=>c==1?5:c==2?4:c==3?3:0
-},
+env:c=>c==1?5:c==2?4:c==3?3:0},
 
-// HUANG
-huang:{
-disp:["arg","col","per","otro"],
+huang:{disp:["arg","col","per","otro"],
 prod:{
-arg:{
-fan:13,playerAdidas:16,playerNike:18,retro:20,nba:22,
-kitInfantil:13,shortsFan:11,shortsPlayer:15,medias:6,
-entrenamiento:50,underArmour:30,kitCompleto:21,
-jacketPants:40,pants:20
+arg:{fan:13,playerAdidas:16,playerNike:18,retro:20,nba:22,kitInfantil:13,shortsFan:11,shortsPlayer:15,medias:6,entrenamiento:50,underArmour:30,kitCompleto:21,jacketPants:40,pants:20},
+otro:{fan:11,playerAdidas:14,playerNike:16,retro:16,nba:20,kitInfantil:13,shortsFan:9,shortsPlayer:13,medias:5,entrenamiento:35,underArmour:28,kitCompleto:19,jacketPants:38,pants:18}
 },
-otro:{
-fan:11,playerAdidas:14,playerNike:16,retro:16,nba:20,
-kitInfantil:13,shortsFan:9,shortsPlayer:13,medias:5,
-entrenamiento:35,underArmour:28,kitCompleto:19,
-jacketPants:38,pants:18
-}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3},
-env:c=>c==1?4:c==2?3:c==3?2:0
-},
+env:c=>c==1?4:c==2?3:c==3?2:0},
 
-// MEI OU
-meiou:{
-disp:["arg","col","per","otro"],
-prod:{otro:{
-fan:11,playerAdidas:13,playerPuma:14,playerNike:15,
-retro:15,nba:20,nfl:25,kitInfantil:13,
-shortsFan:10,shortsPlayer:13,medias:8,
-jacket:40,entrenamiento:35,rompevientos:32
-}},
+meiou:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:13,playerPuma:14,playerNike:15,retro:15,nba:20,nfl:25,kitInfantil:13,shortsFan:10,shortsPlayer:13,medias:8,jacket:40,entrenamiento:35,rompevientos:32}},
 ext:{parche:1,personalizacion:3,manga:1,talle3XL:1,talle4XL:2},
-env:c=>c<=2?10:c<=4?8:6
-},
+env:c=>c<=2?10:c<=4?8:6},
 
-// PINHUI
-pinhui:{
-disp:["arg","col","per","otro"],
-prod:{otro:{
-fan:11,playerAdidas:13,playerPuma:15,playerNike:17,
-retro:17,nba:20,nfl:25,kitInfantil:14,
-shortsFan:10,shortsPlayer:15,medias:8,
-entrenamiento:40,jacket:30,kitCompleto:20
-}},
+pinhui:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:13,playerPuma:15,playerNike:17,retro:17,nba:20,nfl:25,kitInfantil:14,shortsFan:10,shortsPlayer:15,medias:8,entrenamiento:40,jacket:30,kitCompleto:20}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3},
-env:c=>c>=5?0:5
-},
+env:c=>c>=5?0:5},
 
-// ANNIE
-annie:{
-disp:["arg","col","per","otro"],
-prod:{
-arg:{
-fan:12,player:18,retro:18,nba:22,
-kitInfantil:14,kitAdulto:22,shorts:12,manga:16
-},
-otro:{
-fan:11,player:15,retro:16
-}},
+annie:{disp:["arg","col","per","otro"],
+prod:{arg:{fan:12,player:18,retro:18,nba:22,kitInfantil:14,kitAdulto:22,shorts:12,manga:16},otro:{fan:11,player:15,retro:16}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:2},
-env:c=>10
-},
+env:c=>10},
 
-// BOND
-bond:{
-disp:["arg","col","per","otro"],
-prod:{otro:{
-fan:11,playerAdidas:14,playerNike:15,retro:16,
-kitInfantil:13,shortsFan:8,shortsPlayer:12,
-shortsRetro:13,medias:3,
-entrenamiento:35,kitCompleto:19,
-jacketPants:38,pants:18
-}},
+bond:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,kitInfantil:13,shortsFan:8,shortsPlayer:12,shortsRetro:13,medias:3,entrenamiento:35,kitCompleto:19,jacketPants:38,pants:18}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>c==1?7:c<=4?5:0
-},
+env:c=>c==1?7:c<=4?5:0},
 
-// JERRY
-jerry:{
-disp:["col","per","otro"],
-prod:{otro:{
-fan:11,player:15,retro:16,nba:20,kitInfantil:13
-}},
+jerry:{disp:["col","per","otro"],
+prod:{otro:{fan:11,player:15,retro:16,nba:20,kitInfantil:13}},
 ext:{parche:1,personalizacion:3},
-env:c=>c>=3?0:5
-},
+env:c=>c>=3?0:5},
 
-// XIAO LI
-xiaoli:{
-disp:["arg","col","per","otro"],
+xiaoli:{disp:["arg","col","per","otro"],
 prod:{
-arg:{
-fan:13,playerAdidas:16,playerNike:17,retro:18,
-nba:22,nfl:25,kitInfantil:15,kitAdulto:21,
-shortsFan:10,shortsPlayer:14,shorts:16,
-mediasNinos:3,mediasAdultos:4,
-entrenamiento:37,jacket:30,pants:19,
-jacketPants:42,jugadorEstrella:1
+arg:{fan:13,playerAdidas:16,playerNike:17,retro:18,nba:22,nfl:25,kitInfantil:15,kitAdulto:21,shortsFan:10,shortsPlayer:14,shorts:16,mediasNinos:3,mediasAdultos:4,entrenamiento:37,jacket:30,pants:19,jacketPants:42},
+otro:{fan:11,playerAdidas:14,playerNike:16,retro:15,nba:20}
 },
-otro:{
-fan:11,playerAdidas:14,playerNike:16,retro:15,nba:20
-}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>c==2?11:c==3?9:c==4?7:0
-},
+env:c=>c==2?11:c==3?9:c==4?7:0},
 
-// MEI TING
-meiting:{
-disp:["arg","col","per","otro"],
-prod:{otro:{
-fan:11,playerNike:15,retro:15,nba:20,nfl:25,
-kitInfantil:13,shortsFan:10,shortsPlayer:13,
-medias:8,jacket:40,entrenamiento:35
-}},
+meiting:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerNike:15,retro:15,nba:20,nfl:25,kitInfantil:13,shortsFan:10,shortsPlayer:13,medias:8,jacket:40,entrenamiento:35}},
 ext:{parche:1,personalizacion:3,manga:1,talle3XL:1,talle4XL:2},
-env:c=>c<=2?10:c<=4?8:6
-},
+env:c=>c<=2?10:c<=4?8:6},
 
-// MAI
-mai:{
-disp:["arg","col","per","otro"],
-prod:{otro:{
-fan:11,playerAdidas:14,playerNike:15,retro:16,
-nba:20,nfl:23,kitInfantil:13,kitAdulto:19,
-shortsFan:8,shortsPlayer:12,shorts:14,
-mediasNinos:2,mediasAdultos:3,
-entrenamiento:35,jacket:28,pants:17,
-jacketPants:38,jugadorEstrella:1
-}},
+mai:{disp:["arg","col","per","otro"],
+prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,nba:20,nfl:23,kitInfantil:13,kitAdulto:19,shortsFan:8,shortsPlayer:12,shorts:14,mediasNinos:2,mediasAdultos:3,entrenamiento:35,jacket:28,pants:17,jacketPants:38}},
 ext:{parche:1,personalizacion:3,talle:1},
-env:c=>5
-}
+env:c=>5}
 
 };
 
-let carritos = {};
+// carrito
+let carritos={};
 
+// INIT
 function init(){
 let pais=document.getElementById("pais").value;
 let sel=document.getElementById("vendedor");
@@ -268,6 +142,7 @@ sel.appendChild(op);
 cargarTodo();
 }
 
+// cargar
 function cargarTodo(){
 let pais=document.getElementById("pais").value;
 let vendedor=document.getElementById("vendedor").value;
@@ -281,7 +156,7 @@ prodSel.innerHTML="";
 for(let p in productos){
 let op=document.createElement("option");
 op.value=p;
-op.textContent=p+" ($"+productos[p]+")";
+op.textContent=(nombres[p]||p)+" ($"+productos[p]+")";
 prodSel.appendChild(op);
 }
 
@@ -301,28 +176,36 @@ extras.appendChild(document.createElement("br"));
 render();
 }
 
+// agregar
 function agregar(){
-
 let pais=document.getElementById("pais").value;
 let vendedor=document.getElementById("vendedor").value;
 let producto=document.getElementById("producto").value;
+let cantidad=parseInt(document.getElementById("cantidad").value)||1;
 
 if(!carritos[vendedor]) carritos[vendedor]=[];
 
 let v=vendedores[vendedor];
 let productos=v.prod[pais]||v.prod.otro;
 
-let precio=productos[producto];
+let base=productos[producto];
+let extrasSel=[];
+let extraTotal=0;
 
 document.querySelectorAll("#extras input:checked").forEach(c=>{
-precio+=v.ext[c.value];
+extrasSel.push(c.value);
+extraTotal+=v.ext[c.value];
 });
 
-carritos[vendedor].push(precio);
+let precio=(base+extraTotal)*cantidad;
+
+carritos[vendedor].push({producto,extras:extrasSel,cantidad,precio});
 
 render();
+calcular();
 }
 
+// render
 function render(){
 let vendedor=document.getElementById("vendedor").value;
 let ul=document.getElementById("carrito");
@@ -330,11 +213,14 @@ ul.innerHTML="";
 
 let cart=carritos[vendedor]||[];
 
-cart.forEach((precio,index)=>{
+cart.forEach((item,index)=>{
+let nombre=nombres[item.producto]||item.producto;
+let extras=item.extras.length?(" + "+item.extras.join(", ")):"";
+
 let li=document.createElement("li");
 
-li.innerHTML = `
-$${precio} 
+li.innerHTML=`
+${item.cantidad}x ${nombre}${extras} - $${item.precio}
 <button class="btn-eliminar" onclick="eliminar(${index})">X</button>
 `;
 
@@ -342,23 +228,33 @@ ul.appendChild(li);
 });
 }
 
+// eliminar
 function eliminar(index){
 let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor].splice(index,1);
 render();
+calcular();
 }
 
-function calcular(){
+// vaciar
+function vaciar(){
+let vendedor=document.getElementById("vendedor").value;
+carritos[vendedor]=[];
+render();
+calcular();
+}
 
+// total
+function calcular(){
 let vendedor=document.getElementById("vendedor").value;
 let v=vendedores[vendedor];
 
 let cart=carritos[vendedor]||[];
 
-let subtotal=cart.reduce((a,b)=>a+b,0);
+let subtotal=cart.reduce((a,b)=>a+b.precio,0);
 let envio=v.env?v.env(cart.length):0;
 
-document.getElementById("total").innerText =
+document.getElementById("total").innerText=
 "TOTAL: $" + (subtotal+envio) + " (envío $" + envio + ")";
 }
 
