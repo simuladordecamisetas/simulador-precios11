@@ -373,10 +373,15 @@ extras.innerHTML+=`<label><input type="checkbox" value="${e}"> ${e.replace("tall
 
 // ENVIO DINAMICO
 let envioSelect=document.getElementById("tipoEnvio");
+
 envioSelect.innerHTML=`<option value="normal">Normal</option>`;
+
 if(v.ems){
 envioSelect.innerHTML+=`<option value="ems">EMS (+$${v.ems})</option>`;
 }
+
+// recalcular cuando cambie
+envioSelect.onchange=calcular;
 
 render();
 calcular();
@@ -451,14 +456,22 @@ calcular();
 
 function calcular(){
 let vendedor=document.getElementById("vendedor").value;
-let tipo=document.getElementById("tipoEnvio").value;
+let tipo=document.getElementById("tipoEnvio")?.value || "normal";
+
 let v=vendedores[vendedor];
 let cart=carritos[vendedor]||[];
 
-let items=cart.reduce((a,b)=>a+b.cantidad,0);
+let totalItems=cart.reduce((a,b)=>a+b.cantidad,0);
 let subtotal=cart.reduce((a,b)=>a+b.precio,0);
 
-let envio=(tipo==="ems" && v.ems)?v.ems:v.env(items);
+// 🔥 ENVIO CORRECTO
+let envio;
+
+if(tipo==="ems" && v.ems){
+envio=v.ems; // reemplaza el normal
+}else{
+envio=v.env(totalItems);
+}
 
 document.getElementById("total").innerText=
 `Subtotal: $${subtotal}
