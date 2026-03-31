@@ -206,7 +206,30 @@ shortsFan:10,shortsPlayer:13,medias:8,
 kitEntrenamiento:35,jacket:30
 }},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
-env:c=>c>=5?6:c>=3?8:10,
+
+env:(c)=>{
+let pais=document.getElementById("pais").value;
+
+// 🇦🇷 ARGENTINA
+if(pais==="arg"){
+if(c<=2) return 10;
+if(c<=4) return 8;
+return 6;
+}
+
+// 🇨🇴 🇵🇪 COLOMBIA / PERÚ
+if(pais==="col" || pais==="per"){
+if(c>=5) return 0;
+return 5;
+}
+
+// 🌍 OTROS
+if(c>=4) return 0;
+if(c==3) return 3;
+if(c==2) return 4;
+return 5;
+},
+
 ems:10
 },
 
