@@ -163,12 +163,11 @@ king:{
 disp:["col","per","otro"],
 prod:{otro:{
 fan:11,playerAdidas:14,playerNike:15,
-retro:15,nba:20,nfl:25,
+retro:15,nba:20,
 kitInfantil:13,
-shortsFan:9,medias:4,
-kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38
+shortsFan:9,medias:4
 }},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,cuelloPolo:1,mangaLarga:1},
+ext:{parche:1,personalizacion:3,talle2XL:1,cuelloPolo:1,mangaLarga:1},
 env:c=>c>=4?0:c==3?3:c==2?4:5,
 ems:null
 },
@@ -178,20 +177,22 @@ disp:["arg","col","per","otro"],
 prod:{
 arg:{
 fan:13,playerAdidas:16,playerNike:18,
-retro:20,nba:22,nfl:25,
+retro:19,nba:22,
 kitInfantil:13,
 shortsFan:11,shortsPlayer:15,medias:6,
-kitEntrenamiento:40,jacket:30,pants:20,jacketPants:40
+kitEntrenamiento:40,underArmour:30,
+kitAdulto:21,jacketPants:40,pants:20
 },
 otro:{
 fan:11,playerAdidas:14,playerNike:16,
-retro:16,nba:20,nfl:25,
+retro:16,nba:20,
 kitInfantil:13,
 shortsFan:9,shortsPlayer:13,medias:5,
-kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38
+kitEntrenamiento:35,underArmour:28,
+kitAdulto:19,jacketPants:38,pants:18
 }
 },
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:2},
 env:c=>c>=4?0:c==3?2:c==2?3:4,
 ems:null
 },
@@ -203,33 +204,28 @@ fan:11,playerAdidas:13,playerPuma:14,playerNike:15,
 retro:15,nba:20,nfl:25,
 kitInfantil:13,
 shortsFan:10,shortsPlayer:13,medias:8,
-kitEntrenamiento:35,jacket:30
+kitEntrenamiento:35,jacket:30,jacketPants:40
 }},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
-
+ext:{parche:1,personalizacion:3,talle3XL:1,talle4XL:2,mangaLarga:1},
 env:(c)=>{
 let pais=document.getElementById("pais").value;
 
-// 🇦🇷 ARGENTINA
 if(pais==="arg"){
 if(c<=2) return 10;
 if(c<=4) return 8;
 return 6;
 }
 
-// 🇨🇴 🇵🇪 COLOMBIA / PERÚ
-if(pais==="col" || pais==="per"){
+if(pais==="col"||pais==="per"){
 if(c>=5) return 0;
 return 5;
 }
 
-// 🌍 OTROS
 if(c>=4) return 0;
 if(c==3) return 3;
 if(c==2) return 4;
 return 5;
 },
-
 ems:10
 },
 
@@ -252,9 +248,9 @@ disp:["arg","col","per","otro"],
 prod:{
 arg:{
 fan:12,playerAdidas:18,playerNike:18,
-retro:18,nba:22,nfl:24,
-kitInfantil:14,kitAdulto:22,
-shortsFan:12,
+retro:18,nba:22,
+kitInfantil:14,kitAdulto:21,
+shortsFan:11,
 kitEntrenamiento:40,jacket:35
 },
 otro:{
@@ -271,10 +267,11 @@ bond:{
 disp:["arg","col","per","otro"],
 prod:{otro:{
 fan:11,playerAdidas:14,playerNike:15,
-retro:16,nba:20,
+retro:16,
 kitInfantil:13,
 shortsFan:8,shortsPlayer:12,medias:3,
-kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38
+kitEntrenamiento:35,kitAdulto:19,
+jacketPants:38,pants:18
 }},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
 env:c=>c>=5?0:c>=2?5:7,
@@ -285,7 +282,8 @@ jerry:{
 disp:["col","per","otro"],
 prod:{otro:{
 fan:11,playerNike:15,
-retro:16,nba:20
+retro:16,nba:20,
+kitInfantil:13
 }},
 ext:{parche:1,personalizacion:3},
 env:c=>c>=3?0:5,
@@ -308,7 +306,7 @@ fan:11,playerAdidas:14,playerNike:16,
 retro:15,nba:20
 }
 },
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1},
 env:c=>c>=5?0:c==4?7:c==3?9:c==2?11:5,
 ems:null
 },
@@ -320,10 +318,28 @@ fan:11,playerAdidas:13,playerPuma:14,playerNike:15,
 retro:15,nba:20,nfl:25,
 kitInfantil:13,
 shortsFan:10,shortsPlayer:13,medias:8,
-kitEntrenamiento:35,jacket:30
+kitEntrenamiento:35,jacket:30,jacketPants:40
 }},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
-env:c=>c>=5?6:c>=3?8:10,
+ext:{parche:1,personalizacion:3,talle3XL:1,talle4XL:2,mangaLarga:1},
+env:(c)=>{
+let pais=document.getElementById("pais").value;
+
+if(pais==="arg"){
+if(c<=2) return 10;
+if(c<=4) return 8;
+return 6;
+}
+
+if(pais==="col"||pais==="per"){
+if(c>=5) return 0;
+return 5;
+}
+
+if(c>=4) return 0;
+if(c==3) return 3;
+if(c==2) return 4;
+return 5;
+},
 ems:10
 },
 
@@ -338,7 +354,7 @@ medias:3,
 kitEntrenamiento:35,jacket:28,pants:17,jacketPants:38
 }},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>5,
+env:c=>c>=5?0:5,
 ems:20
 }
 
