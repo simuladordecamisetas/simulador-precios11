@@ -25,6 +25,7 @@ url("https://i.pinimg.com/736x/4e/53/df/4e53df7fbfe0a967661bbd9d46393994.jpg") c
 z-index:-1;
 }
 
+
 .container{
 max-width:1100px;
 margin:auto;
@@ -33,8 +34,6 @@ padding:25px;
 border-radius:16px;
 box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
-
-h2{text-align:center;}
 
 .grid{
 display:grid;
@@ -75,7 +74,6 @@ background:white;
 margin:6px 0;
 padding:10px;
 border-radius:8px;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
 .btn-eliminar{
@@ -89,12 +87,12 @@ padding:4px 8px;
 
 .total{
 margin-top:15px;
-font-size:22px;
-text-align:center;
+font-size:20px;
 font-weight:bold;
 background:#e0f2fe;
 padding:10px;
 border-radius:10px;
+white-space:pre-line;
 }
 </style>
 
@@ -103,7 +101,6 @@ border-radius:10px;
 <body>
 
 <div class="container">
-
 <h2>Simulador PRO</h2>
 
 <div class="grid">
@@ -129,23 +126,21 @@ border-radius:10px;
 
 <div id="extras"></div>
 
+<label>Tipo de envío</label>
+<select id="tipoEnvio"></select>
+
 <button class="btn-agregar" onclick="agregar()">Agregar</button>
 
 </div>
 
 <div class="card">
-
 <h3>Carrito</h3>
 <ul id="carrito"></ul>
-
 <button class="btn-vaciar" onclick="vaciar()">Vaciar</button>
-
 <div class="total" id="total"></div>
-
 </div>
 
 </div>
-
 </div>
 
 <script>
@@ -154,95 +149,175 @@ let nombres={
 fan:"Fan",playerAdidas:"Player Adidas",playerNike:"Player Nike",playerPuma:"Player Puma",
 retro:"Retro",nba:"NBA",nfl:"NFL",
 shortsFan:"Short Fan",shortsPlayer:"Short Player",
-medias:"Medias",mediasNinos:"Medias Niño",mediasAdultos:"Medias Adulto",
+medias:"Medias",
 kitInfantil:"Kit Infantil",kitAdulto:"Kit Adulto",
 kitEntrenamiento:"Kit Entrenamiento",
 jacket:"Jacket",
 pants:"Pants",
-jacketPants:"Jacket + Pants",
-underArmour:"Under Armour"
+jacketPants:"Jacket + Pants"
 };
 
 let vendedores={
 
-king:{disp:["col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:15,nba:20,nfl:25,kitInfantil:13,shortsFan:9,medias:4,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38,underArmour:28}},
-ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1,cuelloPolo:1},
-env:c=>c>=4?0:c==3?3:c==2?4:5},
+king:{
+disp:["col","per","otro"],
+prod:{otro:{
+fan:11,playerAdidas:14,playerNike:15,
+retro:15,nba:20,nfl:25,
+kitInfantil:13,
+shortsFan:9,medias:4,
+kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38
+}},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,cuelloPolo:1,mangaLarga:1},
+env:c=>c>=4?0:c==3?3:c==2?4:5,
+ems:null
+},
 
-huang:{disp:["arg","col","per","otro"],
+huang:{
+disp:["arg","col","per","otro"],
 prod:{
-arg:{fan:13,playerAdidas:16,playerNike:18,retro:20,nba:22,nfl:25,shortsFan:11,shortsPlayer:15,medias:6,kitEntrenamiento:40,jacket:30,pants:20,jacketPants:40,underArmour:30},
-otro:{fan:11,playerAdidas:14,playerNike:16,retro:16,nba:20,nfl:25,shortsFan:9,shortsPlayer:13,medias:5,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38,underArmour:28}
+arg:{
+fan:13,playerAdidas:16,playerNike:18,
+retro:20,nba:22,nfl:25,
+kitInfantil:13,
+shortsFan:11,shortsPlayer:15,medias:6,
+kitEntrenamiento:40,jacket:30,pants:20,jacketPants:40
+},
+otro:{
+fan:11,playerAdidas:14,playerNike:16,
+retro:16,nba:20,nfl:25,
+kitInfantil:13,
+shortsFan:9,shortsPlayer:13,medias:5,
+kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38
+}
 },
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
-env:c=>c>=4?0:c==3?2:c==2?3:4},
+env:c=>c>=4?0:c==3?2:c==2?3:4,
+ems:null
+},
 
-meiou:{disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:13,playerPuma:14,playerNike:15,retro:15,nba:20,nfl:25,shortsFan:10,shortsPlayer:13,medias:8,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38}},
+meiou:{
+disp:["arg","col","per","otro"],
+prod:{otro:{
+fan:11,playerAdidas:13,playerPuma:14,playerNike:15,
+retro:15,nba:20,nfl:25,
+kitInfantil:13,
+shortsFan:10,shortsPlayer:13,medias:8,
+kitEntrenamiento:35,jacket:30
+}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
-env:c=>c>=5?6:c>=3?8:10},
+env:c=>c>=5?6:c>=3?8:10,
+ems:10
+},
 
 pinhui:{
 disp:["arg","col","per","otro"],
 prod:{otro:{
-fan:12,
-playerAdidas:15,
-playerPuma:17,
-playerNike:17,
-retro:18,
-nba:20,
-nfl:25,
-
-kitInfantil:14,
-kitAdulto:20,
-
-shortsFan:11,
-shortsPlayer:15,
-medias:8,
-
-kitEntrenamiento:40,
-jacket:30
+fan:12,playerAdidas:15,playerPuma:17,playerNike:17,
+retro:18,nba:20,nfl:25,
+kitInfantil:14,kitAdulto:20,
+shortsFan:11,shortsPlayer:15,medias:8,
+kitEntrenamiento:40,jacket:30
 }},
-ext:{
-parche:1,
-personalizacion:3,
-talle2XL:1,
-talle3XL:2,
-talle4XL:3
-},
-env:c=>c>=5?0:5
-},
-
-annie:{disp:["arg","col","per","otro"],
-prod:{arg:{fan:12,playerAdidas:18,playerNike:18,retro:18,nba:22,nfl:24,shortsFan:12,kitEntrenamiento:40,jacket:35},otro:{fan:11,playerAdidas:15,retro:16,nba:20}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3},
-env:c=>10},
+env:c=>c>=5?0:5,
+ems:10
+},
 
-bond:{disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,shortsFan:8,shortsPlayer:12,medias:3,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38}},
+annie:{
+disp:["arg","col","per","otro"],
+prod:{
+arg:{
+fan:12,playerAdidas:18,playerNike:18,
+retro:18,nba:22,nfl:24,
+kitInfantil:14,kitAdulto:22,
+shortsFan:12,
+kitEntrenamiento:40,jacket:35
+},
+otro:{
+fan:11,playerAdidas:15,
+retro:16,nba:20
+}
+},
+ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:2},
+env:c=>10,
+ems:15
+},
+
+bond:{
+disp:["arg","col","per","otro"],
+prod:{otro:{
+fan:11,playerAdidas:14,playerNike:15,
+retro:16,nba:20,
+kitInfantil:13,
+shortsFan:8,shortsPlayer:12,medias:3,
+kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38
+}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>c>=5?0:c>=2?5:7},
+env:c=>c>=5?0:c>=2?5:7,
+ems:null
+},
 
-jerry:{disp:["col","per","otro"],
-prod:{otro:{fan:11,playerNike:15,retro:16,nba:20,nfl:25}},
+jerry:{
+disp:["col","per","otro"],
+prod:{otro:{
+fan:11,playerNike:15,
+retro:16,nba:20
+}},
 ext:{parche:1,personalizacion:3},
-env:c=>c>=3?0:5},
+env:c=>c>=3?0:5,
+ems:null
+},
 
-xiaoli:{disp:["arg","col","per","otro"],
-prod:{arg:{fan:13,playerAdidas:16,playerNike:17,retro:18,nba:22,nfl:25,shortsFan:10,shortsPlayer:14,mediasNinos:3,mediasAdultos:4,kitEntrenamiento:37,jacket:30,pants:19,jacketPants:42},otro:{fan:11,playerAdidas:14,playerNike:16,retro:15,nba:20}},
+xiaoli:{
+disp:["arg","col","per","otro"],
+prod:{
+arg:{
+fan:13,playerAdidas:16,playerNike:17,
+retro:18,nba:22,nfl:25,
+kitInfantil:15,kitAdulto:21,
+shortsFan:10,shortsPlayer:14,
+medias:4,
+kitEntrenamiento:37,jacket:30,pants:19,jacketPants:42
+},
+otro:{
+fan:11,playerAdidas:14,playerNike:16,
+retro:15,nba:20
+}
+},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>c>=5?0:c==4?7:c==3?9:c==2?11:5},
+env:c=>c>=5?0:c==4?7:c==3?9:c==2?11:5,
+ems:null
+},
 
-meiting:{disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerNike:15,retro:15,nba:20,nfl:25,shortsFan:10,shortsPlayer:13,medias:8,kitEntrenamiento:35,jacket:30,pants:18,jacketPants:38}},
+meiting:{
+disp:["arg","col","per","otro"],
+prod:{otro:{
+fan:11,playerAdidas:13,playerPuma:14,playerNike:15,
+retro:15,nba:20,nfl:25,
+kitInfantil:13,
+shortsFan:10,shortsPlayer:13,medias:8,
+kitEntrenamiento:35,jacket:30
+}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:2,talle4XL:3,mangaLarga:1},
-env:c=>c>=5?6:c>=3?8:10},
+env:c=>c>=5?6:c>=3?8:10,
+ems:10
+},
 
-mai:{disp:["arg","col","per","otro"],
-prod:{otro:{fan:11,playerAdidas:14,playerNike:15,retro:16,nba:20,nfl:23,shortsFan:8,shortsPlayer:12,mediasNinos:2,mediasAdultos:3,kitEntrenamiento:35,jacket:28,pants:17,jacketPants:38}},
+mai:{
+disp:["arg","col","per","otro"],
+prod:{otro:{
+fan:11,playerAdidas:14,playerNike:15,
+retro:16,nba:20,nfl:23,
+kitInfantil:13,kitAdulto:19,
+shortsFan:8,shortsPlayer:12,
+medias:3,
+kitEntrenamiento:35,jacket:28,pants:17,jacketPants:38
+}},
 ext:{parche:1,personalizacion:3,talle2XL:1,talle3XL:1,talle4XL:1},
-env:c=>5}
+env:c=>5,
+ems:20
+}
 
 };
 
@@ -276,7 +351,7 @@ prodSel.innerHTML="";
 for(let p in productos){
 let op=document.createElement("option");
 op.value=p;
-op.textContent=(nombres[p]||p)+" ($"+productos[p]+")";
+op.textContent=nombres[p]+" ($"+productos[p]+")";
 prodSel.appendChild(op);
 }
 
@@ -284,52 +359,27 @@ let extras=document.getElementById("extras");
 extras.innerHTML="<b>Extras:</b><br>";
 
 // parches
-let parcheInput=document.createElement("input");
-parcheInput.type="number";
-parcheInput.min="0";
-parcheInput.placeholder="Ej: 3";
-parcheInput.id="parcheCantidad";
+extras.innerHTML+=`Parches (+$${v.ext.parche} c/u): <input id="parcheCantidad" type="number" min="0" placeholder="Ej: 3"><br>`;
 
-extras.append("Parches (+$"+v.ext.parche+" c/u): ");
-extras.appendChild(parcheInput);
-extras.appendChild(document.createElement("br"));
+// personalizacion
+extras.innerHTML+=`Personalización (+$${v.ext.personalizacion}): <input id="personalizacionTexto" placeholder="Ej: Messi 10"><br>`;
 
-// personalización
-let persInput=document.createElement("input");
-persInput.type="text";
-persInput.placeholder="Ej: Messi 10";
-persInput.id="personalizacionTexto";
+// talles
+["talle2XL","talle3XL","talle4XL"].forEach(e=>{
+if(v.ext[e]){
+extras.innerHTML+=`<label><input type="checkbox" value="${e}"> ${e.replace("talle","")} (+$${v.ext[e]})</label><br>`;
+}
+});
 
-extras.append("Personalización (+$"+v.ext.personalizacion+"): ");
-extras.appendChild(persInput);
-extras.appendChild(document.createElement("br"));
-
-// otros extras
-for(let e in v.ext){
-
-if(e=="parche"||e=="personalizacion") continue;
-
-let nombreExtra=e;
-if(e=="talle2XL") nombreExtra="Talle 2XL";
-if(e=="talle3XL") nombreExtra="Talle 3XL";
-if(e=="talle4XL") nombreExtra="Talle 4XL";
-if(e=="mangaLarga") nombreExtra="Manga Larga";
-if(e=="cuelloPolo") nombreExtra="Cuello Polo";
-
-let label=document.createElement("label");
-
-let c=document.createElement("input");
-c.type="checkbox";
-c.value=e;
-
-label.appendChild(c);
-label.append(" "+nombreExtra+" (+$"+v.ext[e]+")");
-
-extras.appendChild(label);
-extras.appendChild(document.createElement("br"));
+// ENVIO DINAMICO
+let envioSelect=document.getElementById("tipoEnvio");
+envioSelect.innerHTML=`<option value="normal">Normal</option>`;
+if(v.ems){
+envioSelect.innerHTML+=`<option value="ems">EMS (+$${v.ems})</option>`;
 }
 
 render();
+calcular();
 }
 
 function agregar(){
@@ -348,29 +398,17 @@ let extraTotal=0;
 let extrasSel=[];
 
 // parches
-let cantParches=parseInt(document.getElementById("parcheCantidad").value)||0;
-if(cantParches>0){
-extraTotal+=cantParches*v.ext.parche;
-extrasSel.push(cantParches+" parches");
-}
+let p=parseInt(document.getElementById("parcheCantidad").value)||0;
+if(p){extraTotal+=p*v.ext.parche;extrasSel.push(p+" parches");}
 
-// personalización
-let texto=document.getElementById("personalizacionTexto").value.trim();
-if(texto!=""){
-extraTotal+=v.ext.personalizacion;
-extrasSel.push(texto);
-}
+// personalizacion
+let txt=document.getElementById("personalizacionTexto").value.trim();
+if(txt){extraTotal+=v.ext.personalizacion;extrasSel.push(txt);}
 
-// otros
+// talles
 document.querySelectorAll("#extras input[type=checkbox]:checked").forEach(c=>{
 extraTotal+=v.ext[c.value];
-
-if(c.value=="talle2XL") extrasSel.push("2XL");
-else if(c.value=="talle3XL") extrasSel.push("3XL");
-else if(c.value=="talle4XL") extrasSel.push("4XL");
-else if(c.value=="mangaLarga") extrasSel.push("Manga Larga");
-else if(c.value=="cuelloPolo") extrasSel.push("Cuello Polo");
-else extrasSel.push(c.value);
+extrasSel.push(c.value.replace("talle",""));
 });
 
 let precio=(base+extraTotal)*cantidad;
@@ -388,21 +426,12 @@ ul.innerHTML="";
 
 (carritos[vendedor]||[]).forEach((item,i)=>{
 
-let nombre=nombres[item.producto]||item.producto;
+let extrasTexto=item.extras.length?" + "+item.extras.join(" + "):"";
 
-let extrasTexto=item.extras.length
-? " + " + item.extras.join(" + ")
-: "";
-
-let li=document.createElement("li");
-
-li.innerHTML=`
-${item.cantidad}x ${nombre}${extrasTexto} - $${item.precio}
-<button class="btn-eliminar" onclick="eliminar(${i})">X</button>
+ul.innerHTML+=`
+<li>${item.cantidad}x ${nombres[item.producto]}${extrasTexto} - $${item.precio}
+<button class="btn-eliminar" onclick="eliminar(${i})">X</button></li>
 `;
-
-ul.appendChild(li);
-
 });
 }
 
@@ -422,16 +451,22 @@ calcular();
 
 function calcular(){
 let vendedor=document.getElementById("vendedor").value;
+let tipo=document.getElementById("tipoEnvio").value;
 let v=vendedores[vendedor];
 let cart=carritos[vendedor]||[];
 
-let totalItems=cart.reduce((a,b)=>a+b.cantidad,0);
+let items=cart.reduce((a,b)=>a+b.cantidad,0);
 let subtotal=cart.reduce((a,b)=>a+b.precio,0);
-let envio=v.env(totalItems);
+
+let envio=(tipo==="ems" && v.ems)?v.ems:v.env(items);
 
 document.getElementById("total").innerText=
-"TOTAL: $"+(subtotal+envio)+" ("+totalItems+" productos - envío $"+envio+")";
+`Subtotal: $${subtotal}
+Envío (${tipo==="ems"?"EMS":"Normal"}): $${envio}
+TOTAL: $${subtotal+envio}`;
 }
+
+document.getElementById("tipoEnvio").addEventListener("change",calcular);
 
 init();
 
