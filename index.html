@@ -126,8 +126,7 @@ white-space:pre-line;
 
 <div id="extras"></div>
 
-<label style="font-weight:bold;">Tipo de envío</label>
-<select id="tipoEnvio"></select>
+<div id="tipoEnvio"></div>
 
 <button class="btn-agregar" onclick="agregar()">Agregar</button>
 
@@ -553,6 +552,7 @@ envioSelect.innerHTML+=`<option value="ems">EMS (+$${v.ems})</option>`;
 
 // recalcular cuando cambie
 envioSelect.onchange=calcular;
+
 
 render();
 calcular();
