@@ -589,7 +589,15 @@ extrasSel.push(c.value.replace("talle",""));
 
 let precio=(base+extraTotal)*cantidad;
 
-carritos[vendedor].push({producto,cantidad,precio,extras:extrasSel});
+carritos[vendedor].push({
+producto,
+cantidad,
+base,
+extras:extrasSel,
+parches:cantParches,
+personalizacion:texto,
+precio
+});
 
 render();
 calcular();
@@ -602,13 +610,19 @@ ul.innerHTML="";
 
 (carritos[vendedor]||[]).forEach((item,i)=>{
 
-let extrasTexto=item.extras.length?" + "+item.extras.join(" + "):"";
+let nombre=nombres[item.producto] || item.producto;
 
-ul.innerHTML+=`
-<li>${item.cantidad}x ${nombres[item.producto]}${extrasTexto} - $${item.precio}
-<button class="btn-eliminar" onclick="eliminar(${i})">X</button></li>
-`;
-});
+// línea base
+let texto=`${item.cantidad}x ${nombre} ($${item.base} c/u)\n`;
+
+// parches
+if(item.parches){
+texto+=`+ ${item.parches} parches ($1 c/u)\n`;
+}
+
+// personalización
+if(item.personalizacion){
+texto+=`+ ${item.personalizacion} ($3)\n`;
 }
 
 function eliminar(i){
