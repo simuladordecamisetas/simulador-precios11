@@ -182,7 +182,7 @@ let mensaje="Hola, quiero consultar por:\n\n";
 
 carrito.forEach(item=>{
 
-let size="S"; // podés después hacerlo dinámico si querés
+let size=""; // podés después hacerlo dinámico si querés
 let nombreNumero=""; 
 let version=nombres[item.producto] || item.producto;
 
@@ -208,6 +208,7 @@ let confirmacion=confirm(
 "Este simulador NO envía pedidos automáticamente.\n\n"+
 "👉 Tenés que mandar FOTOS al vendedor\n"+
 "👉 El pedido se coordina manualmente\n\n"+
+"👉 Elegi manualmete el Talle\n\n"+
 "¿Ir al chat?"
 );
 
