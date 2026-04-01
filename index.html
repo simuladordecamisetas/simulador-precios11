@@ -177,20 +177,30 @@ alert("Tu carrito está vacío");
 return;
 }
 
-// 🧾 MENSAJE AUTOMATICO
+// 🧾 MENSAJE AUTOMATICO (FORMATO PRO)
 let mensaje="Hola, quiero consultar por:\n\n";
 
 carrito.forEach(item=>{
-mensaje+=`${item.cantidad}x ${nombres[item.producto]}`;
 
-if(item.extras.length){
-mensaje+=" + "+item.extras.join(" + ");
+let size="S"; // podés después hacerlo dinámico si querés
+let nombreNumero=""; 
+let version=nombres[item.producto] || item.producto;
+
+// detectar personalización (texto escrito)
+item.extras.forEach(e=>{
+if(!e.includes("parches") && !e.includes("XL")){
+nombreNumero=e;
 }
-
-mensaje+="\n";
 });
 
-mensaje+="\n⚠ Voy a enviar fotos de los productos";
+mensaje+=`SIZE: ${size}\n`;
+mensaje+=`NAME AND NUMBER: ${nombreNumero || "Sin nombre"}\n`;
+mensaje+=`VERSION: ${version}\n`;
+mensaje+=`QUANTITY: ${item.cantidad}\n\n`;
+
+});
+
+mensaje+="⚠ Voy a enviar fotos de los productos";
 
 // ⚠ AVISO ANTES DE SALIR
 let confirmacion=confirm(
