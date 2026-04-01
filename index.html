@@ -138,6 +138,11 @@ white-space:pre-line;
 <ul id="carrito"></ul>
 <button class="btn-vaciar" onclick="vaciar()">Vaciar</button>
 <div class="total" id="total"></div>
+<div style="margin-top:10px; text-align:center;">
+<button onclick="contactar()" style="background:#16a34a;color:white;margin-top:10px;">
+Contactar vendedor
+</button>
+</div>
 </div>
 
 </div>
@@ -145,6 +150,75 @@ white-space:pre-line;
 
 <script>
 
+// 📞 CONTACTOS REALES
+let contactos={
+king:"https://wa.me/8617724213565",
+huang:"https://wa.me/8613535386151",
+meiou:"https://wa.me/8615975452336",
+pinhui:"https://wa.me/8613416127767",
+annie1:"https://wa.me/8613620452224",
+annie2:"https://wa.me/8613229555665",
+bond:"https://wa.me/8615361409693",
+jerry:"https://wa.me/8619330347364",
+xiaoli:"https://wa.me/8613556119555",
+meiting:"https://wa.me/8615816128823",
+mai:"https://wa.me/8613250335668"
+};
+
+
+// 🚀 CONTACTAR
+function contactar(){
+
+let vendedor=document.getElementById("vendedor").value;
+let carrito=carritos[vendedor]||[];
+
+if(carrito.length===0){
+alert("Tu carrito está vacío");
+return;
+}
+
+// 🧾 MENSAJE AUTOMATICO
+let mensaje="Hola, quiero consultar por:\n\n";
+
+carrito.forEach(item=>{
+mensaje+=`${item.cantidad}x ${nombres[item.producto]}`;
+
+if(item.extras.length){
+mensaje+=" + "+item.extras.join(" + ");
+}
+
+mensaje+="\n";
+});
+
+mensaje+="\n⚠ Voy a enviar fotos de los productos";
+
+// ⚠ AVISO ANTES DE SALIR
+let confirmacion=confirm(
+"⚠ IMPORTANTE\n\n"+
+"Este simulador NO envía pedidos automáticamente.\n\n"+
+"👉 Tenés que mandar FOTOS al vendedor\n"+
+"👉 El pedido se coordina manualmente\n\n"+
+"¿Ir al chat?"
+);
+
+if(!confirmacion) return;
+
+
+// 🔗 ELECCION LINK
+let link;
+
+if(vendedor==="annie"){
+let opcion=confirm("Annie tiene 2 números.\n\nAceptar = número 1\nCancelar = número 2");
+link=opcion ? contactos.annie1 : contactos.annie2;
+}else{
+link=contactos[vendedor];
+}
+
+// 🚀 REDIRECCION
+window.open(link+"?text="+encodeURIComponent(mensaje),"_blank");
+
+}
+  
 let nombres={
 fan:"Fan",playerAdidas:"Player Adidas",playerNike:"Player Nike",playerPuma:"Player Puma",
 retro:"Retro",nba:"NBA",nfl:"NFL",
