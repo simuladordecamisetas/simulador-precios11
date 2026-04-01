@@ -220,10 +220,19 @@ if(!confirmacion) return;
 let link;
 
 if(vendedor==="annie"){
-let opcion=confirm("Annie tiene 2 números.\n\nAceptar = número 1\nCancelar = número 2");
-link=opcion ? contactos.annie1 : contactos.annie2;
+
+let opcion = prompt(
+"Elegí número de Annie:\n\n1 = Número principal\n2 = Número secundario"
+);
+
+if(opcion==="2"){
+link = contactos.annie2;
 }else{
-link=contactos[vendedor];
+link = contactos.annie1;
+}
+
+}else{
+link = contactos[vendedor];
 }
 
 // 🚀 REDIRECCION
