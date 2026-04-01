@@ -203,13 +203,14 @@ mensaje+=`QUANTITY: ${item.cantidad}\n\n`;
 mensaje+="⚠ Voy a enviar fotos de los productos";
 
 // ⚠ AVISO ANTES DE SALIR
-let confirmacion=confirm(
-"⚠ IMPORTANTE\n\n"+
-"Este simulador NO envía pedidos automáticamente.\n\n"+
-"👉 Tenés que mandar FOTOS al vendedor\n"+
-"👉 El pedido se coordina manualmente\n\n"+
-"👉 Elegi manualmete el Talle\n\n"+
-"¿Ir al chat?"
+let confirmacion = confirm(
+"⚠ IMPORTANTE\n\n" +
+"Este simulador NO envía pedidos automáticamente.\n\n" +
+"Antes de continuar:\n" +
+"• Tenés que mandar FOTOS del producto\n" +
+"• El pedido se coordina manualmente\n" +
+"• Elegí manualmente el talle\n\n" +
+"¿Querés ir al chat del vendedor?"
 );
 
 if(!confirmacion) return;
