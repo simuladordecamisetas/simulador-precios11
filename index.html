@@ -124,6 +124,9 @@ white-space:pre-line;
 <label>Cantidad</label>
 <input type="number" id="cantidad" value="1" min="1">
 
+<label>Precio de venta</label>
+<input type="number" id="precioVenta" placeholder="Ej: 35">
+
 <div id="extras"></div>
 
 <label style="font-weight:bold;">Tipo de envío</label>
@@ -645,19 +648,32 @@ let cart=carritos[vendedor]||[];
 let totalItems=cart.reduce((a,b)=>a+b.cantidad,0);
 let subtotal=cart.reduce((a,b)=>a+b.precio,0);
 
-// 🔥 ENVIO CORRECTO
-let envio;
+// precio de venta
+let precioVenta = parseFloat(document.getElementById("precioVenta")?.value) || 0;
 
+// envio (solo una vez)
+let envio;
 if(tipo==="ems" && v.ems){
-envio=v.ems; // reemplaza el normal
+envio=v.ems;
 }else{
 envio=v.env(totalItems);
 }
 
-document.getElementById("total").innerText=
+// totales
+let totalFinal = subtotal + envio;
+let ganancia = precioVenta > 0 ? (precioVenta - totalFinal) : 0;
+
+// mostrar resultado
+document.getElementById("total").innerText =
 `Subtotal: $${subtotal}
 Envío (${tipo==="ems"?"EMS":"Normal"}): $${envio}
-TOTAL: $${subtotal+envio}`;
+TOTAL: $${totalFinal}` +
+(precioVenta > 0
+? `
+
+💰 Venta: $${precioVenta}
+📈 Ganancia: $${ganancia}`
+: "");
 }
 
 document.getElementById("tipoEnvio").addEventListener("change",calcular);
