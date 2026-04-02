@@ -637,53 +637,27 @@ calcular();
 
 function calcular(){
 let vendedor=document.getElementById("vendedor").value;
-let tipo=document.getElementById("tipoEnvio").value;
+let tipo=document.getElementById("tipoEnvio")?.value || "normal";
+
 let v=vendedores[vendedor];
 let cart=carritos[vendedor]||[];
 
-let texto="";
-let subtotal=0;
-let totalItems=0;
+let totalItems=cart.reduce((a,b)=>a+b.cantidad,0);
+let subtotal=cart.reduce((a,b)=>a+b.precio,0);
 
-cart.forEach(item=>{
-let base=v.prod.otro[item.producto];
-let extrasPrecio=0;
+// 🔥 ENVIO CORRECTO
+let envio;
 
-// calcular extras separados
-item.extras.forEach(e=>{
-if(e.includes("parches")){
-let cant=parseInt(e);
-extrasPrecio+=cant*v.ext.parche;
-}else if(!isNaN(v.ext[e])){
-extrasPrecio+=v.ext[e];
+if(tipo==="ems" && v.ems){
+envio=v.ems; // reemplaza el normal
 }else{
-extrasPrecio+=v.ext.personalizacion;
+envio=v.env(totalItems);
 }
-});
 
-let totalItem=(base+extrasPrecio)*item.cantidad;
-subtotal+=totalItem;
-totalItems+=item.cantidad;
-
-// texto detalle
-texto+=`${item.cantidad}x ${nombres[item.producto]} ($${base} c/u)\n`;
-
-item.extras.forEach(e=>{
-texto+=` + ${e}\n`;
-});
-
-texto+=`= $${totalItem}\n\n`;
-});
-
-// envío
-let envio=(tipo==="ems" && v.ems)?v.ems:v.env(totalItems);
-
-// FINAL
 document.getElementById("total").innerText=
-texto+
-`Subtotal: $${subtotal}\n`+
-`Envío (${tipo==="ems"?"EMS":"Normal"}): $${envio}\n`+
-`TOTAL: $${subtotal+envio}`;
+`Subtotal: $${subtotal}
+Envío (${tipo==="ems"?"EMS":"Normal"}): $${envio}
+TOTAL: $${subtotal+envio}`;
 }
 
 document.getElementById("tipoEnvio").addEventListener("change",calcular);
