@@ -666,14 +666,15 @@ subtotal+=totalItem;
 totalItems+=item.cantidad;
 
 // texto detalle
-texto+=`${item.cantidad}x ${nombres[item.producto]} ($${base} c/u)\n`;
+let linea=`${item.cantidad}x ${nombres[item.producto]} ($${base} c/u)`;
 
-item.extras.forEach(e=>{
-texto+=` + ${e}\n`;
-});
+if(item.extras.length){
+linea+=" + "+item.extras.join(" + ");
+}
 
-texto+=`= $${totalItem}\n\n`;
-});
+linea+=` = $${totalItem}`;
+
+texto+=linea+"\n";
 
 // envío
 let envio=(tipo==="ems" && v.ems)?v.ems:v.env(totalItems);
