@@ -666,13 +666,17 @@ subtotal+=totalItem;
 totalItems+=item.cantidad;
 
 // texto detalle
-texto+=`${item.cantidad}x ${nombres[item.producto]} ($${base} c/u)\n`;
+let linea = `${item.cantidad}x ${nombres[item.producto]} ($${base} c/u)`;
 
-item.extras.forEach(e=>{
-texto+=` + ${e}\n`;
-});
+// agregar extras en la misma línea
+if(item.extras.length){
+linea += " + " + item.extras.join(" + ");
+}
 
-texto+=`= $${totalItem}\n\n`;
+// total de esa línea
+linea += ` = $${totalItem}\n\n`;
+
+texto += linea;
 
 // envío
 let envio=(tipo==="ems" && v.ems)?v.ems:v.env(totalItems);
