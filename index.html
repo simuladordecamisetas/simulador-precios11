@@ -187,26 +187,42 @@ alert("Tu carrito está vacío");
 return;
 }
 
-// 🧾 MENSAJE AUTOMATICO (FORMATO PRO)
+// 🧾 MENSAJE AUTOMATICO (CONDICIONAL PRO)
 let mensaje="Hola, quiero consultar por:\n\n";
 
 carrito.forEach(item=>{
 
-let size=""; // podés después hacerlo dinámico si querés
-let nombreNumero=""; 
+let size="S"; // después si querés lo hacemos dinámico
 let version=nombres[item.producto] || item.producto;
 
-// detectar personalización (texto escrito)
+let nombreNumero="";
+let parchesTexto="";
+
+// detectar extras
 item.extras.forEach(e=>{
-if(!e.includes("parches") && !e.includes("XL")){
-nombreNumero=e;
+if(e.includes("parches")){
+parchesTexto=e; // ej: "3 parches"
+}
+else if(!e.includes("XL")){
+nombreNumero=e; // personalización
 }
 });
 
+// base
 mensaje+=`SIZE: ${size}\n`;
-mensaje+=`NAME AND NUMBER: ${nombreNumero || "Sin nombre"}\n`;
 mensaje+=`VERSION: ${version}\n`;
-mensaje+=`QUANTITY: ${item.cantidad}\n\n`;
+mensaje+=`QUANTITY: ${item.cantidad}\n`;
+
+// 👇 SOLO SI EXISTEN
+if(nombreNumero){
+mensaje+=`NAME AND NUMBER: ${nombreNumero}\n`;
+}
+
+if(parchesTexto){
+mensaje+=`PATCHES: ${parchesTexto}\n`;
+}
+
+mensaje+="\n";
 
 });
 
