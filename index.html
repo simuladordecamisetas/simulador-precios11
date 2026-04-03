@@ -187,42 +187,26 @@ alert("Tu carrito está vacío");
 return;
 }
 
-// 🧾 MENSAJE AUTOMATICO (CONDICIONAL PRO)
+// 🧾 MENSAJE AUTOMATICO (FORMATO PRO)
 let mensaje="Hola, quiero consultar por:\n\n";
 
 carrito.forEach(item=>{
 
-let size="S"; // después si querés lo hacemos dinámico
+let size=""; // podés después hacerlo dinámico si querés
+let nombreNumero=""; 
 let version=nombres[item.producto] || item.producto;
 
-let nombreNumero="";
-let parchesTexto="";
-
-// detectar extras
+// detectar personalización (texto escrito)
 item.extras.forEach(e=>{
-if(e.includes("parches")){
-parchesTexto=e; // ej: "3 parches"
-}
-else if(!e.includes("XL")){
-nombreNumero=e; // personalización
+if(!e.includes("parches") && !e.includes("XL")){
+nombreNumero=e;
 }
 });
 
-// base
 mensaje+=`SIZE: ${size}\n`;
+mensaje+=`NAME AND NUMBER: ${nombreNumero || "Sin nombre"}\n`;
 mensaje+=`VERSION: ${version}\n`;
-mensaje+=`QUANTITY: ${item.cantidad}\n`;
-
-// 👇 SOLO SI EXISTEN
-if(nombreNumero){
-mensaje+=`NAME AND NUMBER: ${nombreNumero}\n`;
-}
-
-if(parchesTexto){
-mensaje+=`PATCHES: ${parchesTexto}\n`;
-}
-
-mensaje+="\n";
+mensaje+=`QUANTITY: ${item.cantidad}\n\n`;
 
 });
 
@@ -236,8 +220,6 @@ let confirmacion = confirm(
 "• Tenés que mandar FOTOS del producto\n" +
 "• El pedido se coordina manualmente\n" +
 "• Elegí manualmente el talle\n\n" +
-" Voy a enviar fotos de los productos\n";
-" Si agrego parches, también enviaré foto de los mismos\n";
 "¿Querés ir al chat del vendedor?"
 );
 
