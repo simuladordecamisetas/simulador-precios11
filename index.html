@@ -167,6 +167,11 @@ Cantidad:
 
 <br><br>
 
+Envío del vendedor (USD):
+<input type="number" id="envioVendedor" placeholder="">
+  
+<br><br>
+
 Cotización USD → ARS:
 <input type="number" id="cotizacion" value="1000">
 
@@ -720,12 +725,13 @@ function calcularDeclaracion(){
 
 let precioUnitario = parseFloat(document.getElementById("precioUnitario").value) || 0;
 let cantidad = parseInt(document.getElementById("cantidadDecl").value) || 0;
+let envioVendedor = parseFloat(document.getElementById("envioVendedor").value) || 0;
 let cotizacion = parseFloat(document.getElementById("cotizacion").value) || 1000;
 
-// 🧮 TOTAL DECLARADO
-let valor = precioUnitario * cantidad;
+// 🧮 TOTAL REAL (productos + envío del chino)
+let valor = (precioUnitario * cantidad) + envioVendedor;
 
-// 📦 correo random 6000-8000
+// 📦 correo argentino (sigue igual)
 let costoCorreo = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
 
 // 💰 impuesto
@@ -740,14 +746,18 @@ let totalARS = impuestoARS + costoCorreo;
 
 // 🧾 mostrar
 document.getElementById("resultadoDeclaracion").innerText =
-`Valor declarado: $${valor} USD
+`Precio por prenda: $${precioUnitario} USD
+Cantidad: ${cantidad}
+Envío vendedor: $${envioVendedor} USD
 
-Excedente: $${valor > 50 ? (valor - 50) : 0} USD
+Valor declarado total: $${valor} USD
+
+Excedente: $${excedente} USD
 
 Impuesto (50%): $${impuestoUSD.toFixed(2)} USD
 (${impuestoARS.toFixed(0)} ARS)
 
-Correo: $${costoCorreo} ARS(Aprox)
+Correo argentino: $${costoCorreo} ARS
 
 TOTAL FINAL: $${totalARS.toFixed(0)} ARS`;
 }
