@@ -151,6 +151,26 @@ white-space:pre-line;
     
     Contactar vendedor
   </button>
+<div id="declaracion" style="display:none;margin-top:15px;background:#fff3cd;padding:12px;border-radius:10px;">
+
+<b>Simulación Declaración Argentina 🇦🇷</b><br><br>
+
+Valor declarado (USD):
+<input type="number" id="valorDeclarado" placeholder="Ej: 80">
+
+<br><br>
+
+Cotización USD → ARS:
+<input type="number" id="cotizacion" value="1000">
+
+<br><br>
+
+<button onclick="calcularDeclaracion()" style="background:#f59e0b;color:white;">
+Calcular impuestos
+</button>
+
+<div id="resultadoDeclaracion" style="margin-top:10px;font-weight:bold;"></div>
+
 </div>
 </div>
 </div>
@@ -583,7 +603,16 @@ envioSelect.onchange=calcular;
 render();
 calcular();
 }
+  
+let pais = document.getElementById("pais").value;
+let decl = document.getElementById("declaracion");
 
+if(pais === "arg"){
+decl.style.display = "block";
+}else{
+decl.style.display = "none";
+}
+  
 function agregar(){
 let pais=document.getElementById("pais").value;
 let vendedor=document.getElementById("vendedor").value;
@@ -680,6 +709,41 @@ document.getElementById("tipoEnvio").addEventListener("change",calcular);
 
 init();
 
+function calcularDeclaracion(){
+
+let valor = parseFloat(document.getElementById("valorDeclarado").value) || 0;
+let cotizacion = parseFloat(document.getElementById("cotizacion").value) || 1000;
+
+// 📦 correo entre 6000 y 8000
+let costoCorreo = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
+
+// 💰 excedente
+let impuestoUSD = 0;
+
+if(valor > 50){
+impuestoUSD = (valor - 50) * 0.5;
+}
+
+// 💱 conversión
+let impuestoARS = impuestoUSD * cotizacion;
+
+// 💵 total final
+let totalARS = impuestoARS + costoCorreo;
+
+// 🧾 mostrar
+document.getElementById("resultadoDeclaracion").innerText =
+`Valor declarado: $${valor} USD
+
+Excedente: $${valor > 50 ? (valor - 50) : 0} USD
+
+Impuesto (50%): $${impuestoUSD.toFixed(2)} USD
+(${impuestoARS.toFixed(0)} ARS)
+
+Correo: $${costoCorreo} ARS
+
+TOTAL FINAL: $${totalARS.toFixed(0)} ARS`;
+}
+  
 </script>
 
 </body>
