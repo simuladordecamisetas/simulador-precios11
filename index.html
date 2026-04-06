@@ -720,18 +720,19 @@ init();
 
 function calcularDeclaracion(){
 
-let valor = parseFloat(document.getElementById("valorDeclarado").value) || 0;
+let precioUnitario = parseFloat(document.getElementById("precioUnitario").value) || 0;
+let cantidad = parseInt(document.getElementById("cantidadDecl").value) || 0;
 let cotizacion = parseFloat(document.getElementById("cotizacion").value) || 1000;
 
-// 📦 correo entre 6000 y 8000
+// 🧮 TOTAL DECLARADO
+let valor = precioUnitario * cantidad;
+
+// 📦 correo random 6000-8000
 let costoCorreo = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
 
-// 💰 excedente
-let impuestoUSD = 0;
-
-if(valor > 50){
-impuestoUSD = (valor - 50) * 0.5;
-}
+// 💰 impuesto
+let excedente = valor > 50 ? (valor - 50) : 0;
+let impuestoUSD = excedente * 0.5;
 
 // 💱 conversión
 let impuestoARS = impuestoUSD * cotizacion;
