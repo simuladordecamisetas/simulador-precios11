@@ -658,6 +658,7 @@ carritos[vendedor].push({producto,cantidad,precio,extras:extrasSel});
 
 render();
 calcular();
+usarCarritoDeclaracion();
 }
 
 function render(){
@@ -681,13 +682,15 @@ let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor].splice(i,1);
 render();
 calcular();
+usarCarritoDeclaracion();
 }
-
+  
 function vaciar(){
 let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor]=[];
 render();
 calcular();
+usarCarritoDeclaracion();
 }
 
 function calcular(){
@@ -758,6 +761,18 @@ Impuesto (50%): $${impuestoUSD.toFixed(2)} USD
 Correo argentino: $${costoCorreo} ARS(Aprox)
 
 TOTAL FINAL: $${totalARS.toFixed(0)} ARS`;
+}
+
+function usarCarritoDeclaracion(){
+
+let vendedor = document.getElementById("vendedor").value;
+let cart = carritos[vendedor] || [];
+
+// 🧮 cantidad total de productos
+let cantidad = cart.reduce((total, item) => total + item.cantidad, 0);
+
+// ✏️ setear en el input
+document.getElementById("cantidadDecl").value = cantidad;
 }
   
 </script>
