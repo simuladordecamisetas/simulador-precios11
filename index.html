@@ -605,6 +605,7 @@ envioSelect.onchange=calcular;
 
 render();
 calcular();
+generarInputsDeclaracion();
 }
   
 let pais = document.getElementById("pais").value;
@@ -615,6 +616,28 @@ decl.style.display = "block";
 }else{
 decl.style.display = "none";
 }
+
+function generarInputsDeclaracion(){
+
+let vendedor = document.getElementById("vendedor").value;
+let cart = carritos[vendedor] || [];
+
+let contenedor = document.getElementById("preciosDeclarados");
+contenedor.innerHTML = "<b>Precio declarado por producto:</b><br><br>";
+
+cart.forEach((item, i)=>{
+
+let nombre = nombres[item.producto];
+
+contenedor.innerHTML += `
+${item.cantidad}x ${nombre} → 
+<input type="number" id="precioDecl_${i}" placeholder="Ej: 18">
+<br><br>
+`;
+
+});
+}
+
   
 function agregar(){
 let pais=document.getElementById("pais").value;
@@ -651,6 +674,7 @@ carritos[vendedor].push({producto,cantidad,precio,extras:extrasSel});
 
 render();
 calcular();
+generarInputsDeclaracion();
 }
 
 function render(){
@@ -674,6 +698,7 @@ let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor].splice(i,1);
 render();
 calcular();
+generarInputsDeclaracion();
 }
   
 function vaciar(){
@@ -681,6 +706,7 @@ let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor]=[];
 render();
 calcular();
+generarInputsDeclaracion();
 }
 
 function calcular(){
@@ -692,6 +718,7 @@ let cart=carritos[vendedor]||[];
 
 let totalItems=cart.reduce((a,b)=>a+b.cantidad,0);
 let subtotal=cart.reduce((a,b)=>a+b.precio,0);
+
 
 // 🔥 ENVIO CORRECTO
 let envio;
@@ -717,44 +744,39 @@ function calcularDeclaracion(){
 let vendedor = document.getElementById("vendedor").value;
 let cart = carritos[vendedor] || [];
 
-let precioUnitario = parseFloat(document.getElementById("precioUnitario").value) || 0;
 let envioVendedor = parseFloat(document.getElementById("envioVendedor").value) || 0;
 let cotizacion = parseFloat(document.getElementById("cotizacion").value) || 1000;
 
-// 🔢 SOLO cantidad (NO precios reales)
-let cantidad = cart.reduce((total, item) => total + item.cantidad, 0);
+// 🧮 valor declarado sumando cada producto
+let valor = 0;
 
-// 💰 valor declarado
-let valor = (precioUnitario * cantidad) + envioVendedor;
+cart.forEach((item, i)=>{
+
+let precio = parseFloat(document.getElementById(`precioDecl_${i}`).value) || 0;
+
+valor += precio * item.cantidad;
+
+});
+
+// ➕ envío
+valor += envioVendedor;
 
 // 📦 correo
 let costoCorreo = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
 
-// 💸 impuestos
+// 💰 impuestos
 let excedente = valor > 50 ? (valor - 50) : 0;
 let impuestoUSD = excedente * 0.5;
 
 // 💱 conversión
 let impuestoARS = impuestoUSD * cotizacion;
 
-// 💵 total final
+// 💵 total
 let totalARS = impuestoARS + costoCorreo;
 
-// 🧾 mostrar productos (solo visual)
-let detalle = "";
-cart.forEach(item=>{
-detalle += `${item.cantidad}x ${nombres[item.producto]}\n`;
-});
-
+// 🧾 mostrar
 document.getElementById("resultadoDeclaracion").innerText =
-`Productos:
-${detalle}
-
-Cantidad total: ${cantidad}
-
-Precio declarado por prenda: $${precioUnitario} USD
-
-Valor declarado: $${valor} USD
+`Valor declarado total: $${valor} USD
 
 Excedente: $${excedente} USD
 
