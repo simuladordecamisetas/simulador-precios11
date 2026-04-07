@@ -155,6 +155,9 @@ white-space:pre-line;
 
 <b>Simulación Declaración Argentina 🇦🇷</b><br><br>
 
+Precio por camiseta (USD):
+<input type="number" id="precioUnitario" placeholder="Ej: 18">
+
 Envío del vendedor (USD):
 <input type="number" id="envioVendedor" placeholder="">
   
@@ -714,23 +717,20 @@ function calcularDeclaracion(){
 let vendedor = document.getElementById("vendedor").value;
 let cart = carritos[vendedor] || [];
 
+let precioUnitario = parseFloat(document.getElementById("precioUnitario").value) || 0;
 let envioVendedor = parseFloat(document.getElementById("envioVendedor").value) || 0;
 let cotizacion = parseFloat(document.getElementById("cotizacion").value) || 1000;
 
-// 🧮 calcular total REAL del carrito
-let valor = 0;
+// 🧮 cantidad automática desde carrito
+let cantidad = cart.reduce((total, item) => total + item.cantidad, 0);
 
-cart.forEach(item=>{
-valor += item.precio;
-});
+// 💰 valor declarado (NO usa precios reales)
+let valor = (precioUnitario * cantidad) + envioVendedor;
 
-// ➕ sumar envío del chino
-valor += envioVendedor;
-
-// 📦 correo argentino
+// 📦 correo
 let costoCorreo = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
 
-// 💰 impuesto
+// 💸 impuestos
 let excedente = valor > 50 ? (valor - 50) : 0;
 let impuestoUSD = excedente * 0.5;
 
@@ -740,27 +740,25 @@ let impuestoARS = impuestoUSD * cotizacion;
 // 💵 total final
 let totalARS = impuestoARS + costoCorreo;
 
-// 🧾 lista de productos
+// 🧾 mostrar productos reales (solo info)
 let detalle = "";
-
 cart.forEach(item=>{
-let nombre = nombres[item.producto];
-detalle += `${item.cantidad}x ${nombre}\n`;
+detalle += `${item.cantidad}x ${nombres[item.producto]}\n`;
 });
 
-// 🧾 mostrar
 document.getElementById("resultadoDeclaracion").innerText =
-`Productos:
+`Productos en carrito:
 ${detalle}
 
-Valor productos: $${(valor - envioVendedor)} USD
-Envío vendedor: $${envioVendedor} USD
+Cantidad total: ${cantidad}
 
-Valor declarado total: $${valor} USD
+Precio declarado por prenda: $${precioUnitario} USD
+
+Valor declarado: $${valor} USD
 
 Excedente: $${excedente} USD
 
-Impuesto (50%): $${impuestoUSD.toFixed(2)} USD
+Impuesto: $${impuestoUSD.toFixed(2)} USD
 (${impuestoARS.toFixed(0)} ARS)
 
 Correo argentino: $${costoCorreo} ARS
