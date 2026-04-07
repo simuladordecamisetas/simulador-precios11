@@ -721,10 +721,10 @@ let precioUnitario = parseFloat(document.getElementById("precioUnitario").value)
 let envioVendedor = parseFloat(document.getElementById("envioVendedor").value) || 0;
 let cotizacion = parseFloat(document.getElementById("cotizacion").value) || 1000;
 
-// 🧮 cantidad automática desde carrito
+// 🔢 SOLO cantidad (NO precios reales)
 let cantidad = cart.reduce((total, item) => total + item.cantidad, 0);
 
-// 💰 valor declarado (NO usa precios reales)
+// 💰 valor declarado
 let valor = (precioUnitario * cantidad) + envioVendedor;
 
 // 📦 correo
@@ -740,14 +740,14 @@ let impuestoARS = impuestoUSD * cotizacion;
 // 💵 total final
 let totalARS = impuestoARS + costoCorreo;
 
-// 🧾 mostrar productos reales (solo info)
+// 🧾 mostrar productos (solo visual)
 let detalle = "";
 cart.forEach(item=>{
 detalle += `${item.cantidad}x ${nombres[item.producto]}\n`;
 });
 
 document.getElementById("resultadoDeclaracion").innerText =
-`Productos en carrito:
+`Productos:
 ${detalle}
 
 Cantidad total: ${cantidad}
