@@ -155,16 +155,6 @@ white-space:pre-line;
 
 <b>Simulación Declaración Argentina 🇦🇷</b><br><br>
 
-Precio por camiseta (USD):
-<input type="number" id="precioUnitario" placeholder="Ej: 18">
-
-<br><br>
-
-Cantidad:
-<input type="number" id="cantidadDecl" placeholder="Ej: 4">
-
-<br><br>
-
 Envío del vendedor (USD):
 <input type="number" id="envioVendedor" placeholder="">
   
@@ -658,7 +648,6 @@ carritos[vendedor].push({producto,cantidad,precio,extras:extrasSel});
 
 render();
 calcular();
-usarCarritoDeclaracion();
 }
 
 function render(){
@@ -682,7 +671,6 @@ let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor].splice(i,1);
 render();
 calcular();
-usarCarritoDeclaracion();
 }
   
 function vaciar(){
@@ -690,7 +678,6 @@ let vendedor=document.getElementById("vendedor").value;
 carritos[vendedor]=[];
 render();
 calcular();
-usarCarritoDeclaracion();
 }
 
 function calcular(){
@@ -724,15 +711,23 @@ init();
 
 function calcularDeclaracion(){
 
-let precioUnitario = parseFloat(document.getElementById("precioUnitario").value) || 0;
-let cantidad = parseInt(document.getElementById("cantidadDecl").value) || 0;
+let vendedor = document.getElementById("vendedor").value;
+let cart = carritos[vendedor] || [];
+
 let envioVendedor = parseFloat(document.getElementById("envioVendedor").value) || 0;
 let cotizacion = parseFloat(document.getElementById("cotizacion").value) || 1000;
 
-// 🧮 TOTAL REAL (productos + envío del chino)
-let valor = (precioUnitario * cantidad) + envioVendedor;
+// 🧮 calcular total REAL del carrito
+let valor = 0;
 
-// 📦 correo argentino (sigue igual)
+cart.forEach(item=>{
+valor += item.precio;
+});
+
+// ➕ sumar envío del chino
+valor += envioVendedor;
+
+// 📦 correo argentino
 let costoCorreo = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
 
 // 💰 impuesto
@@ -745,10 +740,20 @@ let impuestoARS = impuestoUSD * cotizacion;
 // 💵 total final
 let totalARS = impuestoARS + costoCorreo;
 
+// 🧾 lista de productos
+let detalle = "";
+
+cart.forEach(item=>{
+let nombre = nombres[item.producto];
+detalle += `${item.cantidad}x ${nombre}\n`;
+});
+
 // 🧾 mostrar
 document.getElementById("resultadoDeclaracion").innerText =
-`Precio por prenda: $${precioUnitario} USD
-Cantidad: ${cantidad}
+`Productos:
+${detalle}
+
+Valor productos: $${(valor - envioVendedor)} USD
 Envío vendedor: $${envioVendedor} USD
 
 Valor declarado total: $${valor} USD
@@ -758,21 +763,9 @@ Excedente: $${excedente} USD
 Impuesto (50%): $${impuestoUSD.toFixed(2)} USD
 (${impuestoARS.toFixed(0)} ARS)
 
-Correo argentino: $${costoCorreo} ARS(Aprox)
+Correo argentino: $${costoCorreo} ARS
 
 TOTAL FINAL: $${totalARS.toFixed(0)} ARS`;
-}
-
-function usarCarritoDeclaracion(){
-
-let vendedor = document.getElementById("vendedor").value;
-let cart = carritos[vendedor] || [];
-
-// 🧮 cantidad total de productos
-let cantidad = cart.reduce((total, item) => total + item.cantidad, 0);
-
-// ✏️ setear en el input
-document.getElementById("cantidadDecl").value = cantidad;
 }
   
 </script>
