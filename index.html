@@ -148,12 +148,7 @@ white-space:pre-line;
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
          alt="WhatsApp" 
          style="width:20px; height:20px;">
-
-<button onclick="verCatalogo()" 
-style="background:#0ea5e9; color:white; margin-top:10px;">
-Ver catálogo
-</button>
-
+    
     Contactar vendedor
   </button>
 <div id="declaracion" style="display:none;margin-top:15px;background:#fff3cd;padding:12px;border-radius:10px;">
@@ -204,18 +199,6 @@ meiting:"https://wa.me/8615816128823",
 mai:"https://wa.me/8613250335668"
 };
 
-let catalogos={
-king:["LINK_KING"],
-huang:["LINK_HUANG"],
-meiou:["LINK_MEIOU"],
-pinhui:["LINK_PINHUI"],
-annie:["LINK_ANNIE"],
-bond:["LINK_BOND1","LINK_BOND2"],
-jerry:["LINK_JERRY1","LINK_JERRY2"],
-xiaoli:["LINK_XIAOLI"],
-meiting:["LINK_MEITING"],
-mai:["LINK_MAI"]
-};
 
 // 🚀 CONTACTAR
 function contactar(){
@@ -574,37 +557,6 @@ op.textContent=v.toUpperCase();
 sel.appendChild(op);
 }}
 cargarTodo();
-}
-
-function verCatalogo(){
-
-let vendedor=document.getElementById("vendedor").value;
-let links=catalogos[vendedor];
-
-if(!links || links.length===0){
-alert("Este vendedor no tiene catálogo cargado");
-return;
-}
-
-// 👇 COMO ANNIE (con números)
-if(vendedor==="bond" || vendedor==="jerry"){
-
-let opcion = prompt(
-"Elegí catálogo:\n\n1 = Catálogo 1\n2 = Catálogo 2"
-);
-
-if(opcion==="2"){
-window.open(links[1],"_blank");
-}else{
-window.open(links[0],"_blank");
-}
-
-return;
-}
-
-// 👇 resto abre directo
-window.open(links[0],"_blank");
-
 }
 
 function cargarTodo(){
