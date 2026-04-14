@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Simulador PRO</title>
+<title>prueba</title>
 
 <style>
 body{
@@ -138,8 +138,15 @@ white-space:pre-line;
 <ul id="carrito"></ul>
 <button class="btn-vaciar" onclick="vaciar()">Vaciar</button>
 <div class="total" id="total"></div>
+
 <div style="margin-top:10px; text-align:center;">
-  <button onclick="contactar()" 
+
+<button onclick="verCatalogo()" 
+style="background:#0ea5e9;color:white;margin-top:10px;padding:8px 14px;border-radius:8px;border:none;cursor:pointer;">
+Ver catálogo
+</button>
+  
+<button onclick="contactar()" 
     style="background:#16a34a; color:white; margin-top:10px; 
            display:flex; align-items:center; justify-content:center; 
            gap:8px; padding:10px 15px; border:none; border-radius:5px; 
@@ -150,6 +157,7 @@ white-space:pre-line;
          style="width:20px; height:20px;">
     
     Contactar vendedor
+    
   </button>
 <div id="declaracion" style="display:none;margin-top:15px;background:#fff3cd;padding:12px;border-radius:10px;">
 
@@ -199,6 +207,34 @@ meiting:"https://wa.me/8615816128823",
 mai:"https://wa.me/8613250335668"
 };
 
+let catalogos={
+
+king:["https://kingcommerce.com.br/catalogos-de-produtos-t/"],
+huang:["https://huang-66.x.zhidian-inc.cn/"],
+meiou:["https://home-jersey.x.yupoo.com/"],
+pinhui:["https://minkang.x.zhidian-inc.cn/categories"],
+annie:["https://maiyuyan.x.zhidian-inc.cn/"],
+jerry1:["https://classic-football-fhirts052.x.yupoo.com/"],
+jerry2:["https://x.yupoo.com/photos/dongshanstore/categories/322329"],
+jerry3:["https://x.yupoo.com/photos/mzrycm102618/albums?tab=gallery"],
+jerry4:["https://1215795243.x.yupoo.com/"],
+jerry5:["https://407131796.x.yupoo.com/categories/67298?isSubCate=true"],
+bond1:["https://minkang.x.yupoo.com/categories/712891"],
+bond2:["https://wavesoccer.x.yupoo.com/collections/334408"],
+bond3:["https://xlf888.x.yupoo.com/albums?page=2"],
+bond4:["https://xingkong-sports.x.yupoo.com/"],
+bond5:["https://yiyisports2016.x.yupoo.com/albums"],
+bond6:["https://miao2017.x.yupoo.com/albums"],
+bond7:["https://x.yupoo.com/photos/xiaobaimaoyi/albums?tab=gallery"],
+bond8:["https://dachang88.x.yupoo.com/albums"],
+bond9:["http://775180006.x.yupoo.com/categories/2854915"],
+bond10:["http://munichmy.x.yupoo.com/albums?tab=gallery"],
+bond11:["https://a-008.x.yupoo.com/categories/497717"],
+xiaoli:["https://hongpintiyu.x.zhidian-inc.cn/"],
+meiting:["https://home-jersey.x.yupoo.com/"],
+mai:["https://minkang.x.yupoo.com/albums"]
+
+};
 
 // 🚀 CONTACTAR
 function contactar(){
@@ -557,6 +593,81 @@ op.textContent=v.toUpperCase();
 sel.appendChild(op);
 }}
 cargarTodo();
+}
+
+let nombresCatalogos={
+
+bond:[
+"Football jersey",
+"Retro jersey",
+"Training suit",
+"NBA jersey",
+"F1",
+"Fashion brand clothing",
+"Shoes",
+"Football shoe",
+"Children's shoes",
+"Cap",
+"T-shirt"
+],
+
+jerry:[
+"Catálogo Camisetas",
+"Conjuntos",
+"Botines",
+"Rompevientos",
+"Hoodies"
+]
+
+};
+
+function verCatalogo(){
+
+let vendedor=document.getElementById("vendedor").value;
+
+// buscar links del vendedor
+let links=[];
+for(let key in catalogos){
+if(key.startsWith(vendedor)){
+links=links.concat(catalogos[key]);
+}
+}
+
+if(!links.length){
+alert("Este vendedor no tiene catálogo cargado");
+return;
+}
+
+// nombres personalizados
+let nombres = nombresCatalogos[vendedor] || [];
+
+// SI TIENE VARIOS
+if(links.length > 1){
+
+let mensaje="Elegí catálogo:\n\n";
+
+links.forEach((link,i)=>{
+
+let nombre = nombres[i] || `Catálogo ${i+1}`;
+mensaje += `${i+1} = ${nombre}\n`;
+
+});
+
+let opcion = prompt(mensaje);
+let index = parseInt(opcion) - 1;
+
+if(links[index]){
+window.open(links[index],"_blank");
+}else{
+alert("Opción inválida");
+}
+
+return;
+}
+
+// SOLO UNO
+window.open(links[0],"_blank");
+
 }
 
 function cargarTodo(){
