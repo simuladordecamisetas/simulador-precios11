@@ -1093,4 +1093,20 @@ localStorage.removeItem("historialPedidos");
 renderHistorial();
 
 }
+document.addEventListener("click", function(e){
+
+let panel = document.getElementById("panelHistorial");
+let boton = document.getElementById("btnHistorial");
+
+// si el panel está abierto
+if(panel.classList.contains("activo")){
+
+// si NO clickeaste ni el panel ni el botón → cerrar
+if(!panel.contains(e.target) && !boton.contains(e.target)){
+panel.classList.remove("activo");
+}
+
+}
+
+});
 </script>
