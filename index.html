@@ -2,10 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Simulador PRO</title>
+<title>PRUEBA</title>
 
-<style>
-body{
+<style> body{
 font-family:'Segoe UI', Arial;
 margin:0;
 padding:20px;
@@ -24,7 +23,6 @@ linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
 url("https://i.pinimg.com/736x/4e/53/df/4e53df7fbfe0a967661bbd9d46393994.jpg") center/cover no-repeat;
 z-index:-1;
 }
-
 
 .container{
 max-width:1100px;
@@ -68,6 +66,47 @@ padding:15px;
 border-radius:12px;
 }
 
+#btnHistorial{
+position:fixed;
+top:20px;
+right:20px;
+
+width:auto;
+display:inline-block;
+margin:0;
+
+background:#2563eb;
+color:white;
+padding:10px 14px;
+border:none;
+border-radius:50px;
+cursor:pointer;
+z-index:2000;
+
+box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* 📦 PANEL HISTORIAL */
+#panelHistorial{
+position:fixed;
+top:0;
+right:-400px;
+width:350px;
+height:100%;
+background:white;
+box-shadow:-5px 0 20px rgba(0,0,0,0.3);
+padding:20px;
+overflow-y:auto;
+transition:0.3s;
+z-index:999;
+border-top-left-radius:15px;
+border-bottom-left-radius:15px;
+}
+
+#panelHistorial.activo{
+right:0;
+}
+
 li{
 list-style:none;
 background:white;
@@ -101,7 +140,7 @@ white-space:pre-line;
 <body>
 
 <div class="container">
-<h2>Simulador PRO</h2>
+<h2>PRUEBA</h2>
 
 <div class="grid">
 
@@ -136,33 +175,50 @@ white-space:pre-line;
 <div class="card">
 <h3>Carrito</h3>
 <ul id="carrito"></ul>
+
 <button class="btn-vaciar" onclick="vaciar()">Vaciar</button>
+
 <div class="total" id="total"></div>
+
+<!-- 🔁 BOTÓN NUEVO -->
+<button onclick="repetirUltimoPedido()" 
+style="background:#2563eb;color:white;">
+Repetir último pedido
+</button>
+
+<!-- 📚 HISTORIAL -->
+<div id="historial" style="margin-top:15px;"></div>
 
 <div style="margin-top:10px; text-align:center;">
 
-<button onclick="verCatalogo()" 
-style="background:#0ea5e9;color:white;margin-top:10px;padding:8px 14px;border-radius:8px;border:none;cursor:pointer;">
-Ver catálogo
-</button>
-  
-<button onclick="contactar()" 
-    style="background:#16a34a; color:white; margin-top:10px; 
-           display:flex; align-items:center; justify-content:center; 
-           gap:8px; padding:10px 15px; border:none; border-radius:5px; 
-           cursor:pointer; margin-left:auto; margin-right:auto;">
-    
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
-         alt="WhatsApp" 
-         style="width:20px; height:20px;">
-    
-    Contactar vendedor
-    
+  <!-- 📂 CATÁLOGO -->
+  <button onclick="verCatalogo()" 
+  style="background:#0ea5e9;color:white;margin-top:10px;padding:8px 14px;border-radius:8px;border:none;cursor:pointer;">
+  Ver catálogo
   </button>
+  
+  <!-- 📞 CONTACTAR -->
+  <button onclick="contactar()" 
+      style="background:#16a34a; color:white; margin-top:10px; 
+             display:flex; align-items:center; justify-content:center; 
+             gap:8px; padding:10px 15px; border:none; border-radius:5px; 
+             cursor:pointer; margin-left:auto; margin-right:auto;">
+      
+      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
+           alt="WhatsApp" 
+           style="width:20px; height:20px;">
+      
+      Contactar vendedor
+      
+  </button>
+
+</div> <!-- 🔥 ESTE DIV TE FALTABA -->
+
+<!-- 📦 DECLARACIÓN -->
 <div id="declaracion" style="display:none;margin-top:15px;background:#fff3cd;padding:12px;border-radius:10px;">
 
 <b>Simulación Declaración Argentina 🇦🇷</b><br><br>
-<!-- 👇 AGREGAR ESTO -->
+
 <div id="preciosDeclarados"></div>
 
 <br><br>
@@ -189,7 +245,13 @@ Calcular impuestos
 
 </div>
 </div>
+<button onclick="toggleHistorial()" id="btnHistorial">📚 Historial</button>
 
+<div id="panelHistorial">
+  <h3>Historial de pedidos</h3>
+  <div id="historialContenido"></div>
+</div>
+  
 <script>
 
 // 📞 CONTACTOS REALES
@@ -247,40 +309,30 @@ alert("Tu carrito está vacío");
 return;
 }
 
-// 🧾 MENSAJE AUTOMATICO (CONDICIONAL PRO)
+// 🔥 GUARDAR SIEMPRE
+guardarPedido();
+
 let mensaje="Hola, quiero consultar por:\n\n";
 
 carrito.forEach(item=>{
 
-let size=" "; // después si querés lo hacemos dinámico
-let version=nombres[item.producto] || item.producto;
+let size=" ";
+let version=nombres[item.producto] ?? item.producto;
 
 let nombreNumero="";
 let parchesTexto="";
 
-// detectar extras
 item.extras.forEach(e=>{
-if(e.includes("parches")){
-parchesTexto=e; // ej: "3 parches"
-}
-else if(!e.includes("XL")){
-nombreNumero=e; // personalización
-}
+if(e.includes("parches")) parchesTexto=e;
+else if(!e.includes("XL")) nombreNumero=e;
 });
 
-// base
 mensaje+=`SIZE: ${size}\n`;
 mensaje+=`VERSION: ${version}\n`;
 mensaje+=`QUANTITY: ${item.cantidad}\n`;
 
-// 👇 SOLO SI EXISTEN
-if(nombreNumero){
-mensaje+=`NAME AND NUMBER: ${nombreNumero}\n`;
-}
-
-if(parchesTexto){
-mensaje+=`PATCHES: ${parchesTexto}\n`;
-}
+if(nombreNumero) mensaje+=`NAME AND NUMBER: ${nombreNumero}\n`;
+if(parchesTexto) mensaje+=`PATCHES: ${parchesTexto}\n`;
 
 mensaje+="\n";
 
@@ -288,40 +340,18 @@ mensaje+="\n";
 
 mensaje+="⚠ Voy a enviar fotos de los productos";
 
-// ⚠ AVISO ANTES DE SALIR
-let confirmacion = confirm(
-"⚠ IMPORTANTE\n\n" +
-"Este simulador NO envía pedidos automáticamente.\n\n" +
-"Antes de continuar:\n" +
-"• Tenés que mandar FOTOS del producto y/o parches\n" +
-"• El pedido se coordina manualmente\n" +
-"• Elegí manualmente el talle\n\n" +
-"¿Querés ir al chat del vendedor?"
-);
-
+let confirmacion = confirm("¿Querés ir al chat del vendedor?");
 if(!confirmacion) return;
 
-
-// 🔗 ELECCION LINK
 let link;
 
 if(vendedor==="annie"){
-
-let opcion = prompt(
-"Elegí número de Annie:\n\n1 = Número principal\n2 = Número secundario"
-);
-
-if(opcion==="2"){
-link = contactos.annie2;
-}else{
-link = contactos.annie1;
-}
-
+let opcion = prompt("1 = principal\n2 = secundario");
+link = (opcion==="2") ? contactos.annie2 : contactos.annie1;
 }else{
 link = contactos[vendedor];
 }
 
-// 🚀 REDIRECCION
 window.open(link+"?text="+encodeURIComponent(mensaje),"_blank");
 
 }
@@ -850,6 +880,7 @@ TOTAL: $${subtotal+envio}`;
 document.getElementById("tipoEnvio").addEventListener("change",calcular);
 
 init();
+renderHistorial();
 
 function calcularDeclaracion(){
 
@@ -899,8 +930,114 @@ Correo argentino: $${costoCorreo} ARS
 
 TOTAL FINAL: $${totalARS.toFixed(0)} ARS`;
 }
-  
-</script>
 
-</body>
-</html>
+
+// ============================
+// 📚 HISTORIAL DE PEDIDOS
+// ============================
+
+function guardarPedido(){
+
+let vendedor = document.getElementById("vendedor").value;
+let cart = carritos[vendedor] || [];
+
+if(cart.length === 0) return;
+
+let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
+
+let fecha = new Date().toLocaleString();
+
+historial.push({
+fecha,
+vendedor,
+items: cart
+});
+
+localStorage.setItem("historialPedidos", JSON.stringify(historial));
+
+renderHistorial();
+}
+
+
+function renderHistorial(){
+
+let cont = document.getElementById("historialContenido");
+if(!cont) return;
+
+let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
+
+cont.innerHTML = "";
+
+historial.slice().reverse().forEach((pedido, i)=>{
+
+let indexOriginal = historial.length - 1 - i;
+
+let texto = `<div style="background:#f1f5f9;padding:10px;border-radius:8px;margin-bottom:10px;">
+<b>${pedido.fecha}</b><br>
+Vendedor: ${pedido.vendedor}<br><br>`;
+
+pedido.items.forEach(item=>{
+texto += `${item.cantidad}x ${nombres[item.producto]}<br>`;
+});
+
+texto += `
+
+<button onclick="repetirPedido(${indexOriginal})" 
+style="margin-top:8px;background:#2563eb;color:white;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;width:100%;">
+Repetir pedido
+</button>
+
+</div>`;
+
+cont.innerHTML += texto;
+
+});
+}
+
+function repetirPedido(index){
+
+let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
+
+let pedido = historial[index]; // 🔥 FIX ACA
+
+if(!pedido) return;
+
+carritos[pedido.vendedor] = JSON.parse(JSON.stringify(pedido.items));
+
+document.getElementById("vendedor").value = pedido.vendedor;
+init();
+cargarTodo();
+render();
+calcular();
+
+alert("Pedido cargado nuevamente ✅");
+}
+
+function repetirUltimoPedido(){
+
+let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
+
+if(historial.length === 0){
+alert("No hay pedidos en el historial");
+return;
+}
+
+let pedido = historial[historial.length - 1];
+
+carritos[pedido.vendedor] = JSON.parse(JSON.stringify(pedido.items));
+
+document.getElementById("vendedor").value = pedido.vendedor;
+
+init();
+cargarTodo();
+render();
+calcular();
+
+alert("Último pedido cargado ✅");
+}
+function toggleHistorial(){
+let panel = document.getElementById("panelHistorial");
+panel.classList.toggle("activo");
+}
+
+</script>
