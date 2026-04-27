@@ -994,15 +994,17 @@ let texto = `<div style="background:#f1f5f9;padding:10px;border-radius:8px;margi
 <b>${pedido.fecha}</b><br>
 Vendedor: ${pedido.vendedor}<br><br>`;
 
+// 🛒 ITEMS
 pedido.items.forEach(item=>{
 texto += `${item.cantidad}x ${nombres[item.producto]} - $${item.precio}<br>`;
 });
 
-// 🔥 ACÁ VA
+// 🔥 TOTAL (con fallback para pedidos viejos)
 let total = pedido.total ?? pedido.items.reduce((a,b)=>a+b.precio,0);
-texto += `<br><b>Total: $${pedido.total}</b>`;
 
-// 🔽 después viene el botón
+texto += `<br><b>Total: $${total}</b>`;
+
+// 🔁 BOTÓN
 texto += `
 <button onclick="repetirPedido(${indexOriginal})"
 style="margin-top:8px;background:#2563eb;color:white;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;width:100%;">
@@ -1014,6 +1016,7 @@ Repetir pedido
 cont.innerHTML += texto;
 
 });
+
 }
 
 function repetirPedido(index){
