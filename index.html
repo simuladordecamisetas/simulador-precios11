@@ -947,17 +947,20 @@ let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
 
 let fecha = new Date().toLocaleString();
 
+// 🔥 CALCULAR TOTAL
+let total = cart.reduce((a,b)=>a+b.precio,0);
+
 historial.push({
 fecha,
 vendedor,
-items: cart
+items: cart,
+total
 });
 
 localStorage.setItem("historialPedidos", JSON.stringify(historial));
 
 renderHistorial();
 }
-
 
 function renderHistorial(){
 
@@ -977,10 +980,10 @@ let texto = `<div style="background:#f1f5f9;padding:10px;border-radius:8px;margi
 Vendedor: ${pedido.vendedor}<br><br>`;
 
 pedido.items.forEach(item=>{
-texto += `${item.cantidad}x ${nombres[item.producto]}<br>`;
+texto += `${item.cantidad}x ${nombres[item.producto]} - $${item.precio}<br>`;
 });
 
-texto += `
+texto += `<br><b>Total: $${pedido.total}</b>`;`
 
 <button onclick="repetirPedido(${indexOriginal})" 
 style="margin-top:8px;background:#2563eb;color:white;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;width:100%;">
