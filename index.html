@@ -947,13 +947,28 @@ let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
 
 let fecha = new Date().toLocaleString();
 
-// 🔥 CALCULAR TOTAL
-let total = cart.reduce((a,b)=>a+b.precio,0);
+// 🔥 CALCULAR ENVÍO EN ESE MOMENTO
+let v = vendedores[vendedor];
+let tipo = document.getElementById("tipoEnvio")?.value || "normal";
 
+let totalItems = cart.reduce((a,b)=>a+b.cantidad,0);
+
+let envio;
+if(tipo==="ems" && v.ems){
+envio = v.ems;
+}else{
+envio = v.env(totalItems);
+}
+
+// 🔥 CALCULAR TOTAL FINAL
+let total = cart.reduce((a,b)=>a+b.precio,0) + envio;
+
+// 🔥 GUARDAR TODO
 historial.push({
 fecha,
 vendedor,
-items: cart,
+items: JSON.parse(JSON.stringify(cart)),
+envio,
 total
 });
 
@@ -985,7 +1000,7 @@ texto += `${item.cantidad}x ${nombres[item.producto]} - $${item.precio}<br>`;
 
 // 🔥 ACÁ VA
 let total = pedido.total ?? pedido.items.reduce((a,b)=>a+b.precio,0);
-texto += `<br><b>Total: $${total}</b>`;
+texto += `<br><b>Total: $${pedido.total}</b>`;
 
 // 🔽 después viene el botón
 texto += `
