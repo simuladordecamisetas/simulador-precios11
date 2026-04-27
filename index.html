@@ -986,6 +986,16 @@ let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
 
 cont.innerHTML = "";
 
+// 🔥 BOTÓN VACIAR HISTORIAL
+if(historial.length > 0){
+cont.innerHTML += `
+<button onclick="vaciarHistorial()"
+style="margin-bottom:10px;background:#ef4444;color:white;padding:8px;border:none;border-radius:8px;cursor:pointer;width:100%;">
+Vaciar historial
+</button>
+`;
+}
+
 historial.slice().reverse().forEach((pedido, i)=>{
 
 let indexOriginal = historial.length - 1 - i;
@@ -999,10 +1009,18 @@ pedido.items.forEach(item=>{
 texto += `${item.cantidad}x ${nombres[item.producto]} - $${item.precio}<br>`;
 });
 
-// 🔥 TOTAL (con fallback para pedidos viejos)
-let total = pedido.total ?? pedido.items.reduce((a,b)=>a+b.precio,0);
+// 🔥 ENVÍO (fallback para viejos)
+let envio = pedido.envio ?? 0;
 
-texto += `<br><b>Total: $${total}</b>`;
+// 🔥 TOTAL (fallback para viejos)
+let total = pedido.total ?? (pedido.items.reduce((a,b)=>a+b.precio,0) + envio);
+
+// 📦 MOSTRAR
+texto += `
+<br>
+Envío: $${envio}<br>
+<b>Total: $${total}</b>
+`;
 
 // 🔁 BOTÓN
 texto += `
@@ -1065,4 +1083,14 @@ let panel = document.getElementById("panelHistorial");
 panel.classList.toggle("activo");
 }
 
+function vaciarHistorial(){
+
+let confirmar = confirm("¿Seguro querés borrar todo el historial?");
+if(!confirmar) return;
+
+localStorage.removeItem("historialPedidos");
+
+renderHistorial();
+
+}
 </script>
