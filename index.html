@@ -983,9 +983,13 @@ pedido.items.forEach(item=>{
 texto += `${item.cantidad}x ${nombres[item.producto]} - $${item.precio}<br>`;
 });
 
-texto += `<br><b>Total: $${pedido.total}</b>`;`
+// 🔥 ACÁ VA
+let total = pedido.total ?? pedido.items.reduce((a,b)=>a+b.precio,0);
+texto += `<br><b>Total: $${total}</b>`;
 
-<button onclick="repetirPedido(${indexOriginal})" 
+// 🔽 después viene el botón
+texto += `
+<button onclick="repetirPedido(${indexOriginal})"
 style="margin-top:8px;background:#2563eb;color:white;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;width:100%;">
 Repetir pedido
 </button>
