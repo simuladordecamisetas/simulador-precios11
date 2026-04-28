@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Simulador PRO</title>
 
-<style> body{
+<style>  body{
 font-family:'Segoe UI', Arial;
 margin:0;
 padding:20px;
@@ -133,6 +133,24 @@ padding:10px;
 border-radius:10px;
 white-space:pre-line;
 }
+
+.item-carrito{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.item-carrito .btn-eliminar{
+width:auto !important;
+padding:5px 10px;
+margin:0;
+background:#ef4444;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
 </style>
 
 </head>
@@ -229,7 +247,7 @@ Envío del vendedor (USD):
 <br><br>
 
 Cotización USD → ARS:
-<input type="number" id="cotizacion" value="1000">
+<input type="number" id="cotizacion" value="1430">
 
 <br><br>
 
@@ -820,23 +838,28 @@ generarInputsDeclaracion();
 }
 
 function render(){
-let vendedor=document.getElementById("vendedor").value;
-let ul=document.getElementById("carrito");
-ul.innerHTML="";
+let vendedor = document.getElementById("vendedor").value;
+let ul = document.getElementById("carrito");
+ul.innerHTML = "";
 
-(carritos[vendedor]||[]).forEach((item,i)=>{
+(carritos[vendedor] || []).forEach((item, i) => {
 
-let extrasTexto=item.extras.length?" + "+item.extras.join(" + "):"";
+let extrasTexto = item.extras.length ? " + " + item.extras.join(" + ") : "";
 
-ul.innerHTML+=`
-<li>${item.cantidad}x ${nombres[item.producto]}${extrasTexto} - $${item.precio}
-<button class="btn-eliminar" onclick="eliminar(${i})">X</button></li>
+ul.innerHTML += `
+<li class="item-carrito">
+<span>
+${item.cantidad}x ${nombres[item.producto]}${extrasTexto} - $${item.precio}
+</span>
+<button class="btn-eliminar" onclick="eliminar(${i})">X</button>
+</li>
 `;
+
 });
 }
 
 function eliminar(i){
-let vendedor=document.getElementById("vendedor").value;
+let vendedor = document.getElementById("vendedor").value;
 carritos[vendedor].splice(i,1);
 render();
 calcular();
@@ -877,9 +900,33 @@ Envío (${tipo==="ems"?"EMS":"Normal"}): $${envio}
 TOTAL: $${subtotal+envio}`;
 }
 
-document.getElementById("tipoEnvio").addEventListener("change",calcular);
+document.getElementById("tipoEnvio").addEventListener("change", calcular);
 
-init();
+// 🔁 RESTAURAR PAÍS Y VENDEDOR
+
+let paisGuardado = localStorage.getItem("pais");
+if(paisGuardado){
+  document.getElementById("pais").value = paisGuardado;
+}
+
+init(); // 🔥 carga vendedores según país
+
+let vendedorGuardado = localStorage.getItem("vendedor");
+if(vendedorGuardado){
+  document.getElementById("vendedor").value = vendedorGuardado;
+  cargarTodo();
+}
+
+// 💾 GUARDAR CUANDO CAMBIAN
+
+document.getElementById("pais").addEventListener("change", function(){
+  localStorage.setItem("pais", this.value);
+});
+
+document.getElementById("vendedor").addEventListener("change", function(){
+  localStorage.setItem("vendedor", this.value);
+});
+
 renderHistorial();
 
 function calcularDeclaracion(){
@@ -926,7 +973,7 @@ Excedente: $${excedente} USD
 Impuesto: $${impuestoUSD.toFixed(2)} USD
 (${impuestoARS.toFixed(0)} ARS)
 
-Correo argentino: $${costoCorreo} ARS
+Correo argentino: $${costoCorreo} ARS (Aprox)
 
 TOTAL FINAL: $${totalARS.toFixed(0)} ARS`;
 }
@@ -1093,6 +1140,7 @@ localStorage.removeItem("historialPedidos");
 renderHistorial();
 
 }
+
 document.addEventListener("click", function(e){
 
 let panel = document.getElementById("panelHistorial");
@@ -1108,5 +1156,33 @@ panel.classList.remove("activo");
 
 }
 
+}); // 🔥 CIERRA EL CLICK
+
+// 💱 COTIZACIÓN AUTOMÁTICA
+
+let inputCotizacion = document.getElementById("cotizacion");
+
+if(inputCotizacion){
+
+// cargar al iniciar
+inputCotizacion.value =
+localStorage.getItem("cotizacion") || 1430;
+
+// guardar cuando cambia
+inputCotizacion.addEventListener("input", function(){
+localStorage.setItem("cotizacion", this.value);
 });
+
+}
+
+// 🌎 GUARDAR PAÍS
+document.getElementById("pais").addEventListener("change", function(){
+localStorage.setItem("pais", this.value);
+});
+
+// 🧑‍💼 GUARDAR VENDEDOR
+document.getElementById("vendedor").addEventListener("change", function(){
+localStorage.setItem("vendedor", this.value);
+});
+
 </script>
