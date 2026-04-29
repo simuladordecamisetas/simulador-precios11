@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Simulador PRO</title>
+<title>PRUEBA</title>
 
 <style>  body{
 font-family:'Segoe UI', Arial;
@@ -277,7 +277,7 @@ let contactos={
 king:"https://wa.me/8617724213565",
 huang:"https://t.me/+8613535386151",
 meiou:"https://wa.me/8615975452336",
-pinhui:"https://wa.me/8613416127767",
+pinhui:"https://wa.me/8615812759099",
 annie1:"https://wa.me/8613620452224",
 annie2:"https://wa.me/8613229555665",
 bond:"https://wa.me/8615361409693",
@@ -952,7 +952,7 @@ valor += precio * item.cantidad;
 valor += envioVendedor;
 
 // 📦 correo
-let costoCorreo = Math.floor(Math.random() * (8000 - 6000 + 1)) + 6000;
+let costoCorreo = 7600;
 
 // 💰 impuestos
 let excedente = valor > 50 ? (valor - 50) : 0;
@@ -1010,13 +1010,16 @@ envio = v.env(totalItems);
 // 🔥 CALCULAR TOTAL FINAL
 let total = cart.reduce((a,b)=>a+b.precio,0) + envio;
 
-// 🔥 GUARDAR TODO
+let tiempo = calcularTiempoEnvio();
+
 historial.push({
 fecha,
 vendedor,
 items: JSON.parse(JSON.stringify(cart)),
 envio,
-total
+total,
+tiempo,
+tipoEnvio: tipo // 👈 AGREGAR ESTO
 });
 
 localStorage.setItem("historialPedidos", JSON.stringify(historial));
@@ -1033,7 +1036,7 @@ let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
 
 cont.innerHTML = "";
 
-// 🔥 BOTÓN VACIAR HISTORIAL
+// 🔥 BOTÓN VACIAR
 if(historial.length > 0){
 cont.innerHTML += `
 <button onclick="vaciarHistorial()"
@@ -1056,16 +1059,21 @@ pedido.items.forEach(item=>{
 texto += `${item.cantidad}x ${nombres[item.producto]} - $${item.precio}<br>`;
 });
 
-// 🔥 ENVÍO (fallback para viejos)
+// 🔥 DATOS
 let envio = pedido.envio ?? 0;
-
-// 🔥 TOTAL (fallback para viejos)
 let total = pedido.total ?? (pedido.items.reduce((a,b)=>a+b.precio,0) + envio);
+let tiempo = pedido.tiempo || "No definido";
+let tipo = pedido.tipoEnvio || "normal";
+
+// 🚀 ICONO SEGÚN ENVÍO
+let icono = tipo === "ems" ? "🚀" : "📦";
+let textoEnvio = tipo === "ems" ? "Envío (EMS)" : "Envío";
 
 // 📦 MOSTRAR
 texto += `
 <br>
-Envío: $${envio}<br>
+${textoEnvio}: $${envio}<br>
+Entrega estimada: ${icono} ${tiempo}<br>
 <b>Total: $${total}</b>
 `;
 
@@ -1083,7 +1091,6 @@ cont.innerHTML += texto;
 });
 
 }
-
 function repetirPedido(index){
 
 let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
@@ -1185,4 +1192,24 @@ document.getElementById("vendedor").addEventListener("change", function(){
 localStorage.setItem("vendedor", this.value);
 });
 
-</script>
+function calcularTiempoEnvio(){
+
+let pais = document.getElementById("pais").value;
+let tipo = document.getElementById("tipoEnvio")?.value || "normal";
+
+if(pais === "arg"){
+  return tipo === "ems" ? "20–35 días" : "35–60 días";
+}
+
+if(pais === "col" || pais === "per"){
+  return tipo === "ems" ? "15–25 días" : "25–35 días";
+}
+
+if(pais === "otro"){
+  return tipo === "ems" ? "7–12 días" : "10–15 días";
+}
+
+return "25–35 días";
+}
+
+  </script>
