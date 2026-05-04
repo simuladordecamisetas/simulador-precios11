@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <title>Simulador PRO</title>
 
-<style>  body{
+<style>
+
+body{
 font-family:'Segoe UI', Arial;
 margin:0;
 padding:20px;
@@ -51,30 +53,46 @@ button{
 width:100%;
 padding:12px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 font-weight:bold;
 cursor:pointer;
 margin-top:10px;
+transition:0.2s;
+}
+
+button:hover{
+transform:scale(1.03);
+filter:brightness(1.1);
+}
+
+button:active{
+transform:scale(0.97);
 }
 
 .btn-agregar{background:#2563eb;color:white;}
 .btn-vaciar{background:#ef4444;color:white;}
 
 .card{
-background:#f1f5f9;
-padding:15px;
-border-radius:12px;
+background:rgba(255,255,255,0.9);
+backdrop-filter: blur(10px);
+padding:18px;
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,0.25);
+transition:0.2s;
+}
+
+.card:hover{
+transform:translateY(-3px);
+box-shadow:0 12px 30px rgba(0,0,0,0.35);
 }
 
 #btnHistorial{
 position:fixed;
 top:20px;
 right:20px;
-
 width:auto;
 display:inline-block;
 margin:0;
-
 background:#2563eb;
 color:white;
 padding:10px 14px;
@@ -82,7 +100,6 @@ border:none;
 border-radius:50px;
 cursor:pointer;
 z-index:2000;
-
 box-shadow:0 4px 12px rgba(0,0,0,0.3);
 }
 
@@ -128,27 +145,103 @@ padding:4px 8px;
 margin-top:15px;
 font-size:20px;
 font-weight:bold;
-background:#e0f2fe;
-padding:10px;
-border-radius:10px;
-white-space:pre-line;
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+color:white;
+padding:15px;
+border-radius:14px;
+box-shadow:0 6px 15px rgba(0,0,0,0.3);
 }
 
 .item-carrito{
 display:flex;
 justify-content:space-between;
 align-items:center;
+background:rgba(255,255,255,0.95);
+padding:12px 14px;
+border-radius:14px;
+margin-bottom:10px;
+box-shadow:0 6px 15px rgba(0,0,0,0.2);
+transition:0.2s;
 }
 
+.item-carrito:hover{
+transform:translateY(-2px) scale(1.01);
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* TEXTO MÁS LINDO */
+.item-carrito span{
+font-size:14px;
+font-weight:500;
+color:#1e293b;
+}
+
+/* BOTÓN ELIMINAR PRO */
 .item-carrito .btn-eliminar{
 width:auto !important;
-padding:5px 10px;
+padding:6px 10px;
 margin:0;
-background:#ef4444;
+background:linear-gradient(135deg,#ef4444,#dc2626);
 color:white;
 border:none;
-border-radius:6px;
+border-radius:8px;
 cursor:pointer;
+transition:0.2s;
+box-shadow:0 3px 8px rgba(0,0,0,0.2);
+}
+
+.item-carrito .btn-eliminar:hover{
+transform:scale(1.1);
+}
+
+.item-carrito .btn-eliminar:active{
+transform:scale(0.9);
+}
+
+/* 🔥 ESTADÍSTICAS MEJORADAS */
+#statsBox{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+padding:12px;
+margin-bottom:15px;
+background:linear-gradient(135deg,#e0f2fe,#dbeafe);
+border-radius:20px;
+box-shadow:inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.stat{
+background:white;
+border-radius:15px;
+padding:12px;
+text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+transition:0.2s;
+border:2px solid transparent;
+}
+
+.stat:hover{
+transform:scale(1.05);
+border:2px solid #2563eb;
+}
+
+.stat span{
+display:block;
+font-size:12px;
+color:#6b7280;
+margin-bottom:4px;
+}
+
+.stat b{
+font-size:18px;
+color:#2563eb;
+}
+
+h2{
+text-align:center;
+font-size:28px;
+margin-bottom:15px;
+color:#1e293b;
 }
 
 </style>
@@ -180,7 +273,7 @@ cursor:pointer;
 
 <label>Cantidad</label>
 <input type="number" id="cantidad" value="1" min="1">
-
+  
 <div id="extras"></div>
 
 <label style="font-weight:bold;">Tipo de envío</label>
@@ -197,12 +290,6 @@ cursor:pointer;
 <button class="btn-vaciar" onclick="vaciar()">Vaciar</button>
 
 <div class="total" id="total"></div>
-
-<!-- 🔁 BOTÓN NUEVO -->
-<button onclick="repetirUltimoPedido()" 
-style="background:#2563eb;color:white;">
-Repetir último pedido
-</button>
 
 <!-- 📚 HISTORIAL -->
 <div id="historial" style="margin-top:15px;"></div>
@@ -267,9 +354,36 @@ Calcular impuestos
 
 <div id="panelHistorial">
   <h3>Historial de pedidos</h3>
+
+  <!-- 📊 ESTADÍSTICAS -->
+  <div id="statsBox">
+
+    <div class="stat">
+      <span>TOP</span>
+      <b id="statTop">-</b>
+    </div>
+
+    <div class="stat">
+      <span>MAS COMPRADO</span>
+      <b id="statProducto">-</b>
+    </div>
+
+    <div class="stat">
+      <span>PEDIDOS</span>
+      <b id="statPedidos">0</b>
+    </div>
+
+    <div class="stat">
+      <span>TOTAL</span>
+      <b id="statTotal">$0</b>
+    </div>
+
+  </div>
+
+  <!-- 📚 HISTORIAL -->
   <div id="historialContenido"></div>
+
 </div>
-  
 <script>
 
 // 📞 CONTACTOS REALES
@@ -334,7 +448,7 @@ let mensaje="Hola, quiero consultar por:\n\n";
 
 carrito.forEach(item=>{
 
-let size=" ";
+let size = "-";
 let version=nombres[item.producto] ?? item.producto;
 
 let nombreNumero="";
@@ -358,7 +472,7 @@ mensaje+="\n";
 
 mensaje+="⚠ Voy a enviar fotos de los productos";
 
-let confirmacion = confirm("¿Querés ir al chat del vendedor?");
+let confirmacion = confirm("⚠ Recordá enviar fotos de los productos.\n\n¿Querés ir al chat del vendedor?");
 if(!confirmacion) return;
 
 let link;
@@ -372,6 +486,12 @@ link = contactos[vendedor];
 
 window.open(link+"?text="+encodeURIComponent(mensaje),"_blank");
 
+// 🧹 BORRAR CARRITO DESPUÉS DE CONTACTAR
+carritos[vendedor] = [];
+
+render();
+calcular();
+generarInputsDeclaracion();
 }
   
 let nombres={
@@ -830,7 +950,12 @@ extrasSel.push(c.value.replace("talle",""));
 
 let precio=(base+extraTotal)*cantidad;
 
-carritos[vendedor].push({producto,cantidad,precio,extras:extrasSel});
+carritos[vendedor].push({
+  producto,
+  cantidad,
+  precio,
+  extras: extrasSel
+});
 
 render();
 calcular();
@@ -844,12 +969,14 @@ ul.innerHTML = "";
 
 (carritos[vendedor] || []).forEach((item, i) => {
 
-let extrasTexto = item.extras.length ? " + " + item.extras.join(" + ") : "";
+let extrasTexto = (item.extras && item.extras.length)
+  ? " + " + item.extras.join(" + ")
+  : "";
 
 ul.innerHTML += `
 <li class="item-carrito">
 <span>
-${item.cantidad}x ${nombres[item.producto]}${extrasTexto} - $${item.precio}
+${item.cantidad}x ${nombres[item.producto]}${extrasTexto}
 </span>
 <button class="btn-eliminar" onclick="eliminar(${i})">X</button>
 </li>
@@ -1090,47 +1217,29 @@ cont.innerHTML += texto;
 
 });
 
+calcularEstadisticas();
+
 }
 function repetirPedido(index){
 
 let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
-
-let pedido = historial[index]; // 🔥 FIX ACA
+let pedido = historial[index];
 
 if(!pedido) return;
 
+// 🛒 cargar carrito
 carritos[pedido.vendedor] = JSON.parse(JSON.stringify(pedido.items));
 
-document.getElementById("vendedor").value = pedido.vendedor;
-init();
+// 🔥 ORDEN CLAVE (ESTO ES LO IMPORTANTE)
+init(); // 1. recarga vendedores
+
+document.getElementById("vendedor").value = pedido.vendedor; // 2. cambia al correcto
+
 cargarTodo();
 render();
 calcular();
 
 alert("Pedido cargado nuevamente ✅");
-}
-
-function repetirUltimoPedido(){
-
-let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
-
-if(historial.length === 0){
-alert("No hay pedidos en el historial");
-return;
-}
-
-let pedido = historial[historial.length - 1];
-
-carritos[pedido.vendedor] = JSON.parse(JSON.stringify(pedido.items));
-
-document.getElementById("vendedor").value = pedido.vendedor;
-
-init();
-cargarTodo();
-render();
-calcular();
-
-alert("Último pedido cargado ✅");
 }
 function toggleHistorial(){
 let panel = document.getElementById("panelHistorial");
@@ -1210,6 +1319,44 @@ if(pais === "otro"){
 }
 
 return "25–35 días";
+}
+
+function calcularEstadisticas(){
+
+let historial = JSON.parse(localStorage.getItem("historialPedidos")) || [];
+
+if(historial.length === 0){
+  document.getElementById("statTop").innerText = "-";
+  document.getElementById("statProducto").innerText = "-";
+  document.getElementById("statPedidos").innerText = "0";
+  document.getElementById("statTotal").innerText = "$0";
+  return;
+}
+
+let total = 0;
+let vendedores = {};
+let productos = {};
+
+historial.forEach(p=>{
+
+  total += p.total || 0;
+
+  vendedores[p.vendedor] = (vendedores[p.vendedor] || 0) + 1;
+
+  p.items.forEach(i=>{
+    productos[i.producto] = (productos[i.producto] || 0) + i.cantidad;
+  });
+
+});
+
+let topVendedor = Object.keys(vendedores).reduce((a,b)=>vendedores[a]>vendedores[b]?a:b);
+let topProducto = Object.keys(productos).reduce((a,b)=>productos[a]>productos[b]?a:b);
+
+// 👉 pintar UI
+document.getElementById("statTop").innerText = topVendedor.toUpperCase();
+document.getElementById("statProducto").innerText = nombres[topProducto];
+document.getElementById("statPedidos").innerText = historial.length;
+document.getElementById("statTotal").innerText = "$" + total;
 }
 
   </script>
