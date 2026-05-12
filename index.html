@@ -1006,8 +1006,10 @@ generarInputsDeclaracion();
 }
 
 function render(){
+
 let vendedor = document.getElementById("vendedor").value;
 let ul = document.getElementById("carrito");
+
 ul.innerHTML = "";
 
 (carritos[vendedor] || []).forEach((item, i) => {
@@ -1018,14 +1020,20 @@ let extrasTexto = (item.extras && item.extras.length)
 
 ul.innerHTML += `
 <li class="item-carrito">
+
 <span>
-${item.cantidad}x ${nombres[item.producto]}${extrasTexto}
+${item.cantidad}x ${nombres[item.producto]} - $${item.precio}${extrasTexto}
 </span>
-<button class="btn-eliminar" onclick="eliminar(${i})">X</button>
+
+<button class="btn-eliminar" onclick="eliminar(${i})">
+X
+</button>
+
 </li>
 `;
 
 });
+
 }
 
 function eliminar(i){
