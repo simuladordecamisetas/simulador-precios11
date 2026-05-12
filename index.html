@@ -1014,15 +1014,35 @@ ul.innerHTML = "";
 
 (carritos[vendedor] || []).forEach((item, i) => {
 
-let extrasTexto = (item.extras && item.extras.length)
-  ? " + " + item.extras.join(" + ")
-  : "";
+let extrasTexto = "";
+
+if(item.extras && item.extras.length){
+
+extrasTexto = item.extras.map(e => {
+
+if(e.includes("parches")){
+return ` (Parches +$1)`;
+}
+
+if(
+e.includes("Messi") ||
+e.includes("Ronaldo") ||
+e.includes("custom")
+){
+return ` (Personalización +$3)`;
+}
+
+return ` (${e})`;
+
+}).join("");
+
+}
 
 ul.innerHTML += `
 <li class="item-carrito">
 
 <span>
-${item.cantidad}x ${nombres[item.producto]} - $${item.precio}${extrasTexto}
+${item.cantidad}x ${nombres[item.producto]}${extrasTexto} - $${item.precio}
 </span>
 
 <button class="btn-eliminar" onclick="eliminar(${i})">
