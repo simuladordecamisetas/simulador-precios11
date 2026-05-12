@@ -1018,23 +1018,19 @@ let extrasTexto = "";
 
 if(item.extras && item.extras.length){
 
-extrasTexto = item.extras.map(e => {
+item.extras.forEach(e=>{
 
+// 🔥 PARCHES
 if(e.includes("parches")){
-return ` (Parches +$1)`;
+extrasTexto += ` (${e} +$1)`;
 }
 
-if(
-e.includes("Messi") ||
-e.includes("Ronaldo") ||
-e.includes("custom")
-){
-return ` (Personalización +$3)`;
+// 🔥 PERSONALIZACIÓN
+else{
+extrasTexto += ` (${e} +$3)`;
 }
 
-return ` (${e})`;
-
-}).join("");
+});
 
 }
 
@@ -1042,7 +1038,11 @@ ul.innerHTML += `
 <li class="item-carrito">
 
 <span>
-${item.cantidad}x ${nombres[item.producto]}${extrasTexto} - $${item.precio}
+<b>${item.cantidad}x ${nombres[item.producto]}</b>
+<br>
+<small>
+${extrasTexto} • Total: $${item.precio}
+</small>
 </span>
 
 <button class="btn-eliminar" onclick="eliminar(${i})">
