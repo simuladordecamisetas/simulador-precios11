@@ -1012,22 +1012,56 @@ let ul = document.getElementById("carrito");
 
 ul.innerHTML = "";
 
+// 🔥 vendedor actual
+let v = vendedores[vendedor];
+
+// 🛒 carrito vacío
+if((carritos[vendedor] || []).length === 0){
+
+ul.innerHTML = `
+<div style="
+text-align:center;
+padding:20px;
+opacity:0.7;
+font-size:14px;
+">
+🛒 Carrito vacío
+</div>
+`;
+
+return;
+}
+
 (carritos[vendedor] || []).forEach((item, i) => {
 
 let extrasTexto = "";
 
+// 🔥 extras
 if(item.extras && item.extras.length){
 
 item.extras.forEach(e=>{
 
-// 🔥 PARCHES
+// 📌 PARCHES
 if(e.includes("parches")){
-extrasTexto += ` (${e} +$1)`;
+extrasTexto += ` (${e} +$${v.ext.parche})`;
 }
 
-// 🔥 PERSONALIZACIÓN
+// ✍️ PERSONALIZACIÓN
+else if(!e.includes("XL")){
+extrasTexto += ` (${e} +$${v.ext.personalizacion})`;
+}
+
+// 👕 TALLES
 else{
-extrasTexto += ` (${e} +$3)`;
+
+let talle = "talle" + e;
+
+if(v.ext[talle]){
+extrasTexto += ` (${e} +$${v.ext[talle]})`;
+}else{
+extrasTexto += ` (${e})`;
+}
+
 }
 
 });
@@ -1038,11 +1072,17 @@ ul.innerHTML += `
 <li class="item-carrito">
 
 <span>
-<b>${item.cantidad}x ${nombres[item.producto]}</b>
+
+<b>
+${item.cantidad}x ${nombres[item.producto]}
+</b>
+
 <br>
+
 <small>
 ${extrasTexto} • Total: $${item.precio}
 </small>
+
 </span>
 
 <button class="btn-eliminar" onclick="eliminar(${i})">
